@@ -36,8 +36,8 @@ extern "C" {
 /* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
 */
 #define SDL_RTF_MAJOR_VERSION	0
-#define SDL_RTF_MINOR_VERSION	0
-#define SDL_RTF_PATCHLEVEL	1
+#define SDL_RTF_MINOR_VERSION	1
+#define SDL_RTF_PATCHLEVEL	0
 
 /* This macro can be used to fill a version structure with the compile-time
  * version of the SDL_rtf library.
