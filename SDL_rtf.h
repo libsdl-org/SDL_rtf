@@ -1,6 +1,6 @@
 /*
     SDL_rtf:  A companion library to SDL for displaying RTF format text
-    Copyright (C) 2003  Sam Lantinga
+    Copyright (C) 2003,2004  Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
