@@ -63,8 +63,8 @@ static int FontFamilyToIndex(RTF_FontFamily family)
 
 static Uint16 UTF8_to_UNICODE(const char *utf8, int *advance)
 {
-	int i = 0;
-	Uint16 ch;
+    int i = 0;
+    Uint16 ch;
 
     ch = ((const unsigned char *)utf8)[i];
     if ( ch >= 0xF0 ) {
@@ -81,7 +81,7 @@ static Uint16 UTF8_to_UNICODE(const char *utf8, int *advance)
         ch |=  (Uint16)(utf8[++i]&0x3F);
     }
     *advance = (i+1);
-	return ch;
+    return ch;
 }
 static void *CreateFont(const char *name, RTF_FontFamily family, int size, int style)
 {
