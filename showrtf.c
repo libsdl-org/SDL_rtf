@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
     }
     atexit(TTF_Quit);
 
-    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, SDL_SWSURFACE);
+    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, SDL_RESIZABLE);
     if ( screen == NULL ) {
         fprintf(stderr, "Couldn't set %dx%d video mode: %s\n", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_GetError());
         return(4);
@@ -245,6 +245,9 @@ int main(int argc, char *argv[])
     while (!done) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_VIDEORESIZE) {
+                screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 0, SDL_RESIZABLE);
+            }
             if (event.type == SDL_KEYDOWN) {
                 switch(event.key.keysym.sym) {
                     case SDLK_ESCAPE:
