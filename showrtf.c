@@ -246,7 +246,10 @@ int main(int argc, char *argv[])
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_VIDEORESIZE) {
+                float ratio = (float)offset / height;
                 screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 0, SDL_RESIZABLE);
+                height = RTF_GetHeight(ctx, screen->w);
+                offset = (int)(ratio * height);
             }
             if (event.type == SDL_KEYDOWN) {
                 switch(event.key.keysym.sym) {
