@@ -118,6 +118,8 @@ SYM rgsymRtf[] = {
     { "bin",      0,      fFalse,     kwdSpec,    ipfnBin },
     { "*",        0,      fFalse,     kwdSpec,    ipfnSkipDest },
     { "'",        0,      fFalse,     kwdSpec,    ipfnHex },
+    { "bkmkend",  0,      fFalse,     kwdDest,    idestSkip },
+    { "bkmkstart",0,      fFalse,     kwdDest,    idestSkip },
     { "buptim",   0,      fFalse,     kwdDest,    idestSkip },
     { "colortbl", 0,      fFalse,     kwdDest,    idestSkip },
     { "comment",  0,      fFalse,     kwdDest,    idestSkip },
