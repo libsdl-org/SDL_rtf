@@ -75,6 +75,7 @@ SYM rgsymRtf[] = {
     { "cf",       1,      fFalse,     kwdProp,    ipropFgColor },
     { "b",        1,      fFalse,     kwdProp,    ipropBold },
     { "ul",       1,      fFalse,     kwdProp,    ipropUnderline },
+    { "ulnone",   0,      fTrue,      kwdProp,    ipropUnderline },
     { "i",        1,      fFalse,     kwdProp,    ipropItalic },
     { "li",       0,      fFalse,     kwdProp,    ipropLeftInd },
     { "ri",       0,      fFalse,     kwdProp,    ipropRightInd },

@@ -474,6 +474,7 @@ ecRtfParse(RTF_Context *ctx)
                     return ec;
                 break;
             case '\\':
+                ecProcessData(ctx);
                 if ((ec = ecParseRtfKeyword(ctx)) != ecOK)
                     return ec;
                 break;
@@ -650,7 +651,7 @@ ecParseRtfKeyword(RTF_Context *ctx)
             param = -param;
         ctx->lParam = atol(szParameter);
         if (fNeg)
-            param = -param;
+            ctx->lParam = -ctx->lParam;
     }
     if (ch != ' ')
         ecRtfUngetChar(ctx, ch);
