@@ -21,7 +21,8 @@ EXTRA_DIST =			\
 	SDL_rtf.spec.in		\
 	autogen.sh
 
-libSDL_rtf_la_LDFLAGS = 		\
+libSDL_rtf_la_LDFLAGS = 	\
+	-no-undefined		\
 	-release $(LT_RELEASE)	\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 libSDL_rtf_la_LIBADD = 
