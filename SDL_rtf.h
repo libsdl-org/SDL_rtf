@@ -28,10 +28,6 @@
 #include "SDL.h"
 #include "begin_code.h"
 
-#include "rtftype.h"
-#define DECLSPEC
-#define SDLCALL
-
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
 extern "C" {
@@ -64,6 +60,34 @@ extern "C" {
    use the SDL_RTF_VERSION() macro.
  */
 extern DECLSPEC const SDL_version * SDLCALL RTF_Linked_Version(void);
+
+typedef struct _RTF_Context RTF_Context;
+
+typedef enum
+{
+    RTF_FontDefault,    /* Unknown or default font */
+    RTF_FontRoman,      /* Proportionally spaced serif fonts,
+                           e.g. Times New Roman, Palatino */
+    RTF_FontSwiss,      /* Proportionally spaced sans serif fonts,
+                           e.g. Arial */
+    RTF_FontModern,     /* Fixed pitch serif and sans serif fonts,
+                           e.g. Courier New, Pica */
+    RTF_FontScript,     /* Script fonts, e.g. Cursive */
+    RTF_FontDecor,      /* Decorative fonts, e.g. Zapf Chancery */
+    RTF_FontTech,       /* Technical, symbol, and math fonts,
+                           e.g. Symbol */
+    RTF_FontBidi        /* Bidirectional fonts, like Arabic or Hebrew */
+}
+RTF_FontFamily;
+
+typedef enum
+{
+    RTF_FontNormal    = 0x00,
+    RTF_FontBold      = 0x01,
+    RTF_FontItalic    = 0x02,
+    RTF_FontUnderline = 0x04
+}
+RTF_FontStyle;
 
 /* Various functions that need to be provided to give SDL_rtf font support */
 

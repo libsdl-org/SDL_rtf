@@ -27,10 +27,11 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "rtftype.h"
-#include "rtfdecl.h"
 #include "SDL_rtf.h"
 #include "SDL_rtfreadr.h"
+
+#include "rtftype.h"
+#include "rtfdecl.h"
 
 /* static function prototypes */
 static int TwipsToPixels(int twips);
