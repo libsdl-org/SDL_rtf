@@ -499,13 +499,13 @@ ecRtfParse(RTF_Context *ctx)
                         {
                             if (ch < 'a' || ch > 'f')
                                 return ecInvalidHex;
-                            b += (char) ch - 'a';
+                            b += 10 + (ch - 'a');
                         }
                         else
                         {
                             if (ch < 'A' || ch > 'F')
                                 return ecInvalidHex;
-                            b += (char) ch - 'A';
+                            b += 10 + (ch - 'A');
                         }
                     }
                     cNibble--;
@@ -722,14 +722,34 @@ ecParseChar(RTF_Context *ctx, int ch)
 int
 ecPrintChar(RTF_Context *ctx, int ch)
 {
-    if(ctx->datapos == ctx->datamax) {
+    int len;
+    if(ctx->datapos >= (ctx->datamax-4)) {
         ctx->datamax += 256;    /* 256 byte chunk size */
         ctx->data = (char *)realloc(ctx->data, ctx->datamax);
         if(!ctx->data) {
             return ecStackOverflow;
         }
     }
-    ctx->data[ctx->datapos++] = (char)ch;
+    /* Some common characters aren't in TrueType font maps */
+    if (ch == 147 || ch == 148)
+        ch = '"';
+
+    /* Convert character into UTF-8 */
+    if (ch <= 0x7fUL) {
+        ctx->data[ctx->datapos++] = ch;
+    } else if (ch <= 0x7ffUL) {
+        ctx->data[ctx->datapos++] = 0xc0 | (ch >> 6);
+        ctx->data[ctx->datapos++] = 0x80 | (ch & 0x3f);
+    } else if (ch <= 0xffffUL) {
+        ctx->data[ctx->datapos++] = 0xe0 | (ch >> 12);
+        ctx->data[ctx->datapos++] = 0x80 | ((ch >> 6) & 0x3f);
+        ctx->data[ctx->datapos++] = 0x80 | (ch & 0x3f);
+    } else {
+        ctx->data[ctx->datapos++] = 0xf0 | (ch >> 18);
+        ctx->data[ctx->datapos++] = 0x80 | ((ch >> 12) & 0x3f);
+        ctx->data[ctx->datapos++] = 0x80 | ((ch >> 6) & 0x3f);
+        ctx->data[ctx->datapos++] = 0x80 | (ch & 0x3f);
+    }
     return ecOK;
 }
 
