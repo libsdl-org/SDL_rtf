@@ -466,10 +466,12 @@ ecRtfParse(RTF_Context *ctx)
             switch (ch)
             {
             case '{':
+                ecProcessData(ctx);
                 if ((ec = ecPushRtfState(ctx)) != ecOK)
                     return ec;
                 break;
             case '}':
+                ecProcessData(ctx);
                 if ((ec = ecPopRtfState(ctx)) != ecOK)
                     return ec;
                 break;
@@ -578,7 +580,6 @@ ecPopRtfState(RTF_Context *ctx)
         if ((ec = ecEndGroupAction(ctx, ctx->rds)) != ecOK)
             return ec;
     }
-    ecProcessData(ctx);
 
     ctx->chp = ctx->psave->chp;
     ctx->pap = ctx->psave->pap;
@@ -764,10 +765,12 @@ int
 ecProcessData(RTF_Context *ctx)
 {
     int status = ecOK;
-    if(ctx->datapos > 0) {
-        ctx->data[ctx->datapos] = '\0';
-        status = ecAddText(ctx, ctx->data);
-        ctx->datapos = 0;
+    if (ctx->rds == rdsNorm) {
+        if (ctx->datapos > 0) {
+            ctx->data[ctx->datapos] = '\0';
+            status = ecAddText(ctx, ctx->data);
+            ctx->datapos = 0;
+        }
     }
     return status;
 }
