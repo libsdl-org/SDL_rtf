@@ -822,10 +822,10 @@ ecParagraph(RTF_Context *ctx)
  * Reflow the text to a new width
  */
 
-/* FIXME: How does this need to be calculated? */
 static int TwipsToPixels(int twips)
 {
-    return twips/20;    /* twips are 1/20 of a pointsize */
+    /* twips are 1/20 of a pointsize, calculate pixels at 72 dpi */
+    return ( ( ( twips * 64 * 72 + (36+32*72) ) / 72 ) / 20 ) / 64;
 }
 
 static RTF_Surface *CreateSurface(RTF_Context *ctx, RTF_TextBlock *textBlock, int offset, int numChars)
@@ -904,12 +904,10 @@ static int ReflowLine(RTF_Context *ctx, RTF_Line *line, int width)
         {
             int num, wrapped, numChars = 0;
             int tab;
-            /* This is sort of a hack, but good enough for now */
             for (tab = 0; tab < textBlock->tabs; ++tab)
             {
-                lineWidth /= tabStop;
-                lineWidth += 1;
-                lineWidth *= tabStop;
+                int nextTab = (((leftMargin+lineWidth)/tabStop) + 1) * tabStop;
+                lineWidth = (nextTab - leftMargin);
             }
             do {
                 num = TextWithinWidth(textBlock, numChars, (width-lineWidth), &wrapped);
