@@ -30,14 +30,15 @@
 
 #include "rtftype.h"
 #include "rtfdecl.h"
+#include "SDL_rtfreadr.h"
 
 
 /* rcg06192001 get linked library's version. */
 const SDL_version *RTF_Linked_Version(void)
 {
-	static SDL_version linked_version;
-	SDL_RTF_VERSION(&linked_version);
-	return(&linked_version);
+        static SDL_version linked_version;
+        SDL_RTF_VERSION(&linked_version);
+        return(&linked_version);
 }
 
 
@@ -47,21 +48,21 @@ const SDL_version *RTF_Linked_Version(void)
  */
 RTF_Context *RTF_CreateContext(RTF_FontEngine *fontEngine)
 {
-	RTF_Context *ctx;
+        RTF_Context *ctx;
 
-	if ( fontEngine->version != RTF_FONT_ENGINE_VERSION ) {
-		RTF_SetError("Unknown font engine version");
-		return(NULL);
-	}
+        if ( fontEngine->version != RTF_FONT_ENGINE_VERSION ) {
+                RTF_SetError("Unknown font engine version");
+                return(NULL);
+        }
 
-	ctx = (RTF_Context *)malloc(sizeof(*ctx));
-	if ( ctx == NULL ) {
-		RTF_SetError("Out of memory");
-		return(NULL);
-	}
-	memset(ctx, 0, sizeof(*ctx));
-	ctx->fontEngine = *fontEngine;
-	return(ctx);
+        ctx = (RTF_Context *)malloc(sizeof(*ctx));
+        if ( ctx == NULL ) {
+                RTF_SetError("Out of memory");
+                return(NULL);
+        }
+        memset(ctx, 0, sizeof(*ctx));
+        ctx->fontEngine = fontEngine;
+        return(ctx);
 }
 
 /* Set the text of an RTF context.
@@ -70,92 +71,92 @@ RTF_Context *RTF_CreateContext(RTF_FontEngine *fontEngine)
  */
 int RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int freesrc)
 {
-	int retval;
+        int retval;
 
-	ecClearContext(ctx);
+        ecClearContext(ctx);
 
-	/* Set up the input stream for loading */
-	ctx->rds = 0;
-	ctx->ris = 0;
-	ctx->cbBin = 0;
-	ctx->fSkipDestIfUnk = 0;
-	ctx->stream = src;
-	ctx->nextch = -1;
+        /* Set up the input stream for loading */
+        ctx->rds = 0;
+        ctx->ris = 0;
+        ctx->cbBin = 0;
+        ctx->fSkipDestIfUnk = 0;
+        ctx->stream = src;
+        ctx->nextch = -1;
 
-	/* Parse the RTF text and clean up */
-	switch(ecRtfParse(ctx)) {
+        /* Parse the RTF text and clean up */
+        switch(ecRtfParse(ctx)) {
             case ecOK:
-		retval = 0;
-		break;
-	    case ecStackUnderflow:
-		RTF_SetError("Unmatched '}'");
-		retval = -1;
-		break;
-	    case ecStackOverflow:
-		RTF_SetError("Too many '{' -- memory exhausted");
-		retval = -1;
-		break;
-	    case ecUnmatchedBrace:
-		RTF_SetError("RTF ended during an open group");
-		retval = -1;
-		break;
-	    case ecInvalidHex:
-		RTF_SetError("Invalid hex character found in data");
-		retval = -1;
-		break;
-	    case ecBadTable:
-		RTF_SetError("RTF table (sym or prop) invalid");
-		retval = -1;
-		break;
-	    case ecAssertion:
-		RTF_SetError("Assertion failure");
-		retval = -1;
-		break;
-	    case ecEndOfFile:
-		RTF_SetError("End of file reached while reading RTF");
-		retval = -1;
-		break;
-	    case ecFontNotFound:
-		RTF_SetError("Couldn't find font for text");
-		retval = -1;
-		break;
-	}
-	while ( ctx->psave ) {
-		ecPopRtfState(ctx);
-	}
-	ctx->stream = NULL;
+                retval = 0;
+                break;
+            case ecStackUnderflow:
+                RTF_SetError("Unmatched '}'");
+                retval = -1;
+                break;
+            case ecStackOverflow:
+                RTF_SetError("Too many '{' -- memory exhausted");
+                retval = -1;
+                break;
+            case ecUnmatchedBrace:
+                RTF_SetError("RTF ended during an open group");
+                retval = -1;
+                break;
+            case ecInvalidHex:
+                RTF_SetError("Invalid hex character found in data");
+                retval = -1;
+                break;
+            case ecBadTable:
+                RTF_SetError("RTF table (sym or prop) invalid");
+                retval = -1;
+                break;
+            case ecAssertion:
+                RTF_SetError("Assertion failure");
+                retval = -1;
+                break;
+            case ecEndOfFile:
+                RTF_SetError("End of file reached while reading RTF");
+                retval = -1;
+                break;
+            case ecFontNotFound:
+                RTF_SetError("Couldn't find font for text");
+                retval = -1;
+                break;
+        }
+        while ( ctx->psave ) {
+                ecPopRtfState(ctx);
+        }
+        ctx->stream = NULL;
 
-	if ( freesrc ) {
-		SDL_RWclose(src);
-	}
-	return(retval);
+        if ( freesrc ) {
+                SDL_RWclose(src);
+        }
+        return(retval);
 }
 int RTF_Load(RTF_Context *ctx, const char *file)
 {
-	SDL_RWops *rw = SDL_RWFromFile(file, "rb");
-	if ( rw == NULL ) {
-		RTF_SetError(SDL_GetError());
-		return -1;
-	}
-	return RTF_Load_RW(ctx, rw, 1);
+        SDL_RWops *rw = SDL_RWFromFile(file, "rb");
+        if ( rw == NULL ) {
+                RTF_SetError(SDL_GetError());
+                return -1;
+        }
+        return RTF_Load_RW(ctx, rw, 1);
 }
 
 /* Get the title of an RTF document */
 const char *RTF_GetTitle(RTF_Context *ctx)
 {
-	return ctx->title ? ctx->title : "";
+        return ctx->title ? ctx->title : "";
 }
 
 /* Get the subject of an RTF document */
 const char *RTF_GetSubject(RTF_Context *ctx)
 {
-	return ctx->subject ? ctx->subject : "";
+        return ctx->subject ? ctx->subject : "";
 }
 
 /* Get the author of an RTF document */
 const char *RTF_GetAuthor(RTF_Context *ctx)
 {
-	return ctx->author ? ctx->author : "";
+        return ctx->author ? ctx->author : "";
 }
 
 /* Get the height of an RTF render area given a certain width.
@@ -188,7 +189,8 @@ void RTF_Render(RTF_Context *ctx, SDL_Surface *surface, SDL_Rect *rect, int yOff
 /* Free an RTF display context */
 void RTF_FreeContext(RTF_Context *ctx)
 {
-	/* Free it all! */
-	ecClearContext(ctx);
-	free(ctx);
+        /* Free it all! */
+        ecClearContext(ctx);
+        free(ctx);
 }
+

@@ -11,6 +11,8 @@ libSDL_rtf_la_SOURCES =		\
 	rtfdecl.h		\
 	rtfreadr.c		\
 	rtftype.h		\
+	SDL_rtfreadr.c		\
+	SDL_rtfreadr.h		\
 	SDL_rtf.c
 
 EXTRA_DIST =			\

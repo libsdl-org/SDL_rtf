@@ -1,3 +1,6 @@
+0.1.1:
+Alison Winters - Sun Sep  7 21:04:07 PDT 2003
+ * Separated code so the core RTF parsing can be used in other applications
 0.1.0:
 Sam Lantinga - Thu Aug 21 16:38:18 PDT 2003
  * Initial source release

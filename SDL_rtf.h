@@ -28,6 +28,10 @@
 #include "SDL.h"
 #include "begin_code.h"
 
+#include "rtftype.h"
+#define DECLSPEC
+#define SDLCALL
+
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
 extern "C" {
@@ -35,25 +39,25 @@ extern "C" {
 
 /* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
 */
-#define SDL_RTF_MAJOR_VERSION	0
-#define SDL_RTF_MINOR_VERSION	1
-#define SDL_RTF_PATCHLEVEL	0
+#define SDL_RTF_MAJOR_VERSION   0
+#define SDL_RTF_MINOR_VERSION   1
+#define SDL_RTF_PATCHLEVEL      0
 
 /* This macro can be used to fill a version structure with the compile-time
  * version of the SDL_rtf library.
  */
-#define SDL_RTF_VERSION(X)						\
-{									\
-	(X)->major = SDL_RTF_MAJOR_VERSION;				\
-	(X)->minor = SDL_RTF_MINOR_VERSION;				\
-	(X)->patch = SDL_RTF_PATCHLEVEL;				\
+#define SDL_RTF_VERSION(X)                                              \
+{                                                                       \
+        (X)->major = SDL_RTF_MAJOR_VERSION;                                \
+        (X)->minor = SDL_RTF_MINOR_VERSION;                                \
+        (X)->patch = SDL_RTF_PATCHLEVEL;                                \
 }
 
 /* Backwards compatibility */
-#define RTF_MAJOR_VERSION	SDL_RTF_MAJOR_VERSION
-#define RTF_MINOR_VERSION	SDL_RTF_MINOR_VERSION
-#define RTF_PATCHLEVEL		SDL_RTF_PATCHLEVEL
-#define RTF_VERSION(X)		SDL_RTF_VERSION(X)
+#define RTF_MAJOR_VERSION       SDL_RTF_MAJOR_VERSION
+#define RTF_MINOR_VERSION       SDL_RTF_MINOR_VERSION
+#define RTF_PATCHLEVEL          SDL_RTF_PATCHLEVEL
+#define RTF_VERSION(X)          SDL_RTF_VERSION(X)
 
 /* This function gets the version of the dynamically linked SDL_rtf library.
    it should NOT be used to fill a version structure, instead you should
@@ -61,38 +65,13 @@ extern "C" {
  */
 extern DECLSPEC const SDL_version * SDLCALL RTF_Linked_Version(void);
 
-/* The internal structure containing RTF document information */
-typedef struct _RTF_Context RTF_Context;
-
 /* Various functions that need to be provided to give SDL_rtf font support */
 
-#define RTF_FONT_ENGINE_VERSION	1
-
-typedef enum {
-	RTF_FontDefault,	/* Unknown or default font */
-	RTF_FontRoman,		/* Proportionally spaced serif fonts,
-				   e.g. Times New Roman, Palatino */
-	RTF_FontSwiss,		/* Proportionally spaced sans serif fonts,
-				   e.g. Arial */
-	RTF_FontModern,		/* Fixed pitch serif and sans serif fonts,
-				   e.g. Courier New, Pica */
-	RTF_FontScript,		/* Script fonts, e.g. Cursive */
-	RTF_FontDecor,		/* Decorative fonts, e.g. Zapf Chancery */
-	RTF_FontTech,		/* Technical, symbol, and math fonts,
-				   e.g. Symbol */
-	RTF_FontBidi		/* Bidirectional fonts, like Arabic or Hebrew */
-} RTF_FontFamily;
-
-typedef enum {
-	RTF_FontNormal		= 0x00,
-	RTF_FontBold		= 0x01,
-	RTF_FontItalic		= 0x02,
-	RTF_FontUnderline	= 0x04
-} RTF_FontStyle;
+#define RTF_FONT_ENGINE_VERSION 1
 
 typedef struct _RTF_FontEngine
 {
-    int version;	/* This should be set to RTF_FONT_ENGINE_VERSION */
+    int version;        /* This should be set to RTF_FONT_ENGINE_VERSION */
 
     /* A function to create a font matching the requested parameters.
        The family is one of those listed in the RTF_FontFamily enum.
@@ -157,8 +136,8 @@ extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Surface *surface, 
 extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
  
 /* We'll use SDL for reporting errors */
-#define RTF_SetError	SDL_SetError
-#define RTF_GetError	SDL_GetError
+#define RTF_SetError    SDL_SetError
+#define RTF_GetError    SDL_GetError
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus
@@ -167,3 +146,4 @@ extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
 #include "close_code.h"
 
 #endif /* _SDL_RTF_H */
+
