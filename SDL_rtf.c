@@ -61,7 +61,13 @@ RTF_Context *RTF_CreateContext(RTF_FontEngine *fontEngine)
                 return(NULL);
         }
         memset(ctx, 0, sizeof(*ctx));
-        ctx->fontEngine = fontEngine;
+        ctx->fontEngine = malloc(sizeof *fontEngine);
+	if ( ctx->fontEngine == NULL ) {
+		RTF_SetError("Out of memory");
+		free(ctx);
+		return(NULL);
+	}
+	memcpy(ctx->fontEngine, fontEngine, sizeof(*fontEngine));
         return(ctx);
 }
 
@@ -191,6 +197,7 @@ void RTF_FreeContext(RTF_Context *ctx)
 {
         /* Free it all! */
         ecClearContext(ctx);
+	free(ctx->fontEngine);
         free(ctx);
 }
 
