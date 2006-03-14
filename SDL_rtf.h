@@ -99,11 +99,11 @@ typedef struct _RTF_FontEngine
 
     /* A function to create a font matching the requested parameters.
        The family is one of those listed in the RTF_FontFamily enum.
+       The charset is a Windows character set
        The size is in points.
        The style is a bitmask of the constants in RTF_FontStyle.
-       (FIXME: How does one specify that a document is Korean, for example?)
      */
-    void *(*CreateFont)(const char *name, RTF_FontFamily family, int size, int style);
+    void *(*CreateFont)(const char *name, RTF_FontFamily family, int charset, int size, int style);
 
     /* Return the spacing in pixels between rows of text using this font */
     int (*GetLineSpacing)(void *font);

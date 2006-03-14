@@ -13,6 +13,7 @@ typedef char bool;
 
 typedef struct char_prop
 {
+    int fFontCharset;
     int fFont;
     int fFontSize;
     char fBgColor;
@@ -122,6 +123,7 @@ SAVE;
 typedef enum
 {
     ipropFontFamily,
+    ipropFontCharset,
     ipropColorRed,
     ipropColorGreen,
     ipropColorBlue,
@@ -281,6 +283,7 @@ typedef struct _RTF_FontEntry
     int number;
     char *name;
     RTF_FontFamily family;
+    int charset;
     RTF_Font *fonts;
     struct _RTF_FontEntry *next;
 }

@@ -18,7 +18,7 @@ static void FreeTextBlock(RTF_TextBlock *text);
  * %%Function: ecAddFontEntry
  */
 int ecAddFontEntry(RTF_Context *ctx, int number, const char *name,
-        int family)
+        int family, int charset)
 {
     RTF_FontEntry *entry = (RTF_FontEntry *) malloc(sizeof(*entry));
 
@@ -28,6 +28,7 @@ int ecAddFontEntry(RTF_Context *ctx, int number, const char *name,
     entry->number = number;
     entry->name = strdup(name);
     entry->family = (RTF_FontFamily) family;
+    entry->charset = charset;
     entry->fonts = NULL;
     entry->next = ctx->fontTable;
     ctx->fontTable = entry;
@@ -95,7 +96,7 @@ void *ecLookupFont(RTF_Context *ctx)
         return NULL;
 
     font->font = RTF_CreateFont(ctx->fontEngine, entry->name,
-            entry->family, size, style);
+            entry->family, entry->charset, size, style);
     if (!font->font)
     {
         free(font);
@@ -653,7 +654,8 @@ int ecParseChar(RTF_Context *ctx, int ch)
             {
                 ctx->data[ctx->datapos] = '\0';
                 ecAddFontEntry(ctx, ctx->chp.fFont, ctx->data,
-                               (FFAM) ctx->values[0]);
+                               (FFAM) ctx->values[0],
+                               ctx->chp.fFontCharset);
                 ctx->datapos = 0;
                 ctx->values[0] = 0;
             }

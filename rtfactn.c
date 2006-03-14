@@ -17,6 +17,7 @@
 PROP rgprop[ipropMax] =
 {
     {actnSpec, propChp, 0},     /* ipropFontFamily */
+    {actnWord, propChp, offsetof(CHP, fFontCharset)},   /* ipropFontCharset */
     {actnSpec, propChp, 0},     /* ipropColorRed */
     {actnSpec, propChp, 0},     /* ipropColorGreen */
     {actnSpec, propChp, 0},     /* ipropColorBlue */
@@ -63,6 +64,7 @@ SYM rgsymRtf[] =
     {"fdecor", fdecor, fTrue, kwdProp, ipropFontFamily},
     {"ftech", ftech, fTrue, kwdProp, ipropFontFamily},
     {"fbidi", fbidi, fTrue, kwdProp, ipropFontFamily},
+    {"fcharset", 0, fFalse, kwdProp, ipropFontCharset},
     {"colortbl", 0, fFalse, kwdDest, idestColorTable},
     {"red", 0, fFalse, kwdProp, ipropColorRed},
     {"green", 0, fFalse, kwdProp, ipropColorGreen},

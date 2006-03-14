@@ -47,10 +47,10 @@ static void RenderLine(RTF_Line *line, SDL_Surface *target,
  * %%Function: RTF_CreateFont
  */
 void *RTF_CreateFont(void *fontEngine, const char *name, int family,
-        int size, int style)
+        int charset, int size, int style)
 {
     return ((RTF_FontEngine *) fontEngine)->CreateFont(name, family,
-            size / 2, style);
+            charset, size / 2, style);
 }
 
 /*

@@ -1,4 +1,6 @@
 0.1.1:
+Alison Winters - Tue Mar 14 00:09:36 PST 2006
+ * Added font character set support
 Sam Lantinga - Wed Nov 19 00:23:44 PST 2003
  * Updated libtool support for new mingw32 DLL build process
 Alison Winters - Sun Sep  7 21:04:07 PDT 2003

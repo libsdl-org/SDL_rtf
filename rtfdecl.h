@@ -22,7 +22,7 @@ int ecParseHexByte(RTF_Context * ctx);
 /* rtfreadr.c prototypes */
 
 int ecAddFontEntry(RTF_Context *ctx, int number, const char *name,
-        int family);
+        int family, int charset);
 void *ecLookupFont(RTF_Context *ctx);
 int ecClearFonts(RTF_Context *ctx);
 
@@ -55,7 +55,7 @@ int ecParagraph(RTF_Context *ctx);
 /* custom rtfreader.c prototypes (defined per library) */
 
 void *RTF_CreateFont(void *fontEngine, const char *name, int family,
-        int size, int style);
+        int charset, int size, int style);
 void RTF_FreeFont(void *fontEngine, void *font);
 void *RTF_CreateColor(int r, int g, int b);
 void RTF_FreeColor(void *color);

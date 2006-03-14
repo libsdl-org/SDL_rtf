@@ -83,7 +83,7 @@ static Uint16 UTF8_to_UNICODE(const char *utf8, int *advance)
     *advance = (i+1);
     return ch;
 }
-static void *CreateFont(const char *name, RTF_FontFamily family, int size, int style)
+static void *CreateFont(const char *name, RTF_FontFamily family, int charset, int size, int style)
 {
     int index;
     TTF_Font *font;
@@ -103,6 +103,9 @@ static void *CreateFont(const char *name, RTF_FontFamily family, int size, int s
             TTF_style |= TTF_STYLE_UNDERLINE;
         TTF_SetFontStyle(font, style);
     }
+
+    /* FIXME: What do we do with the character set? */
+
     return font;
 }
 
