@@ -1,4 +1,7 @@
 0.1.1:
+Sam Lantinga - Sun Apr 30 01:48:40 PDT 2006
+ * Added gcc-fat.sh for generating Universal binaries on Mac OS X
+ * Updated libtool support to version 1.5.22
 Alison Winters - Tue Mar 14 00:09:36 PST 2006
  * Added font character set support
 Sam Lantinga - Wed Nov 19 00:23:44 PST 2003
