@@ -19,6 +19,7 @@ EXTRA_DIST =			\
 	CHANGES			\
 	SDL_rtf.spec		\
 	SDL_rtf.spec.in		\
+	gcc-fat			\
 	autogen.sh
 
 libSDL_rtf_la_LDFLAGS = 	\
