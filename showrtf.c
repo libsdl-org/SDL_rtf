@@ -167,6 +167,13 @@ static void PrintUsage(const char *argv0)
     printf("Usage: %s -fdefault font.ttf [-froman font.ttf] [-fswiss font.ttf] [-fmodern font.ttf] [-fscript font.ttf] [-fdecor font.ttf] [-ftech font.ttf] file.rtf\n", argv0);
 }
 
+static void cleanup(int exitcode)
+{
+    TTF_Quit();
+    SDL_Quit();
+    exit(exitcode);
+}
+
 int main(int argc, char *argv[])
 {
     int i, start, stop;
@@ -211,19 +218,18 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
         return(2);
     }
-    atexit(SDL_Quit);
 
     /* Initialize the TTF library */
     if ( TTF_Init() < 0 ) {
         fprintf(stderr, "Couldn't initialize TTF: %s\n",SDL_GetError());
+        SDL_Quit();
         return(3);
     }
-    atexit(TTF_Quit);
 
     screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, SDL_RESIZABLE);
     if ( screen == NULL ) {
         fprintf(stderr, "Couldn't set %dx%d video mode: %s\n", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_GetError());
-        return(4);
+        cleanup(4);
     }
     white = SDL_MapRGB(screen->format, 255, 255, 255);
 
@@ -237,7 +243,7 @@ int main(int argc, char *argv[])
     ctx = RTF_CreateContext(&fontEngine);
     if ( ctx == NULL ) {
         fprintf(stderr, "Couldn't create RTF context: %s\n", RTF_GetError());
-        return(5);
+        cleanup(5);
     }
     LoadRTF(ctx, argv[i]);
 
@@ -318,5 +324,8 @@ int main(int argc, char *argv[])
 
     /* Clean up and exit */
     RTF_FreeContext(ctx);
-    return(0);
+    cleanup(0);
+
+    /* Not reached, but fixes compiler warnings */
+    return 0;
 }
