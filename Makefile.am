@@ -17,6 +17,7 @@ libSDL_rtf_la_SOURCES =		\
 
 EXTRA_DIST =			\
 	CHANGES			\
+	version.rc		\
 	SDL_rtf.spec		\
 	SDL_rtf.spec.in		\
 	gcc-fat.sh		\
