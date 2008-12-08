@@ -1,6 +1,6 @@
 /*
     showrtf:  An example of using the SDL_rtf library
-    Copyright (C) 2003,2004 Sam Lantinga
+    Copyright (C) 2003-2009 Sam Lantinga
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
