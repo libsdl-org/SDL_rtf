@@ -6,7 +6,9 @@
 #ifndef _RTFTYPE_H
 #define _RTFTYPE_H
 
+#ifndef bool
 typedef char bool;
+#endif
 
 #define fTrue 1
 #define fFalse 0
