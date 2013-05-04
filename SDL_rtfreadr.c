@@ -39,8 +39,7 @@ static RTF_Surface *CreateSurface(RTF_Context *ctx,
 static int TextWithinWidth(RTF_TextBlock *textBlock, int offset,
         int width, int *wrapped);
 static int ReflowLine(RTF_Context *ctx, RTF_Line *line, int width);
-static void RenderLine(RTF_Line *line, SDL_Surface *target,
-        const SDL_Rect *rect, int yOffset);
+static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, int yOffset);
 
 /*
  * %%Function: RTF_CreateFont
@@ -65,7 +64,7 @@ void RTF_FreeFont(void *fontEngine, void *font)
  */
 void RTF_FreeSurface(void *surface)
 {
-    SDL_FreeSurface(surface);
+    SDL_DestroyTexture((SDL_Texture *)surface);
 }
 
 /*
@@ -79,7 +78,7 @@ void *RTF_CreateColor(int r, int g, int b)
     color->r = r;
     color->g = g;
     color->b = b;
-    color->unused = 0;
+    color->a = SDL_ALPHA_OPAQUE;
     return color;
 }
 
@@ -146,23 +145,23 @@ int ecReflowText(RTF_Context *ctx, int width)
  *
  * Render the text to a surface
  */
-int ecRenderText(RTF_Context *ctx, SDL_Surface *target,
-        const SDL_Rect *rect, int yOffset)
+int ecRenderText(RTF_Context *ctx, const SDL_Rect *rect, int yOffset)
 {
+    SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
     RTF_Line *line;
     SDL_Rect savedRect;
 
     ecReflowText(ctx, rect->w);
 
-    SDL_GetClipRect(target, &savedRect);
-    SDL_SetClipRect(target, rect);
+    SDL_RenderGetClipRect(renderer, &savedRect);
+    SDL_RenderSetClipRect(renderer, rect);
     for (line = ctx->start; line && yOffset < rect->h; line = line->next)
     {
         if (yOffset + line->lineHeight > 0)
-            RenderLine(line, target, rect, yOffset);
+            RenderLine(ctx, line, rect, yOffset);
         yOffset += line->lineHeight;
     }
-    SDL_SetClipRect(target, &savedRect);
+    SDL_RenderSetClipRect(renderer, &savedRect);
 
     return ecOK;
 }
@@ -176,6 +175,7 @@ static int TwipsToPixels(int twips)
 static RTF_Surface *CreateSurface(RTF_Context *ctx,
         RTF_TextBlock *textBlock, int offset, int numChars)
 {
+    SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
     RTF_Surface *surface = (RTF_Surface *) malloc(sizeof(*surface));
     SDL_Color color;
 
@@ -192,8 +192,7 @@ static RTF_Surface *CreateSurface(RTF_Context *ctx,
             color = *(SDL_Color *) textBlock->color;
         else
             memset(&color, 0, sizeof(color));
-        surface->surface = ((RTF_FontEngine *) ctx->fontEngine)->RenderText(textBlock->font,
-                text, color);
+        surface->surface = ((RTF_FontEngine *) ctx->fontEngine)->RenderText(textBlock->font, renderer, text, color);
         *end = ch;
         if (!surface->surface)
         {
@@ -248,7 +247,7 @@ static int ReflowLine(RTF_Context *ctx, RTF_Line *line, int width)
     {
         RTF_Surface *surface = line->startSurface;
         line->startSurface = surface->next;
-        SDL_FreeSurface(surface->surface);
+        RTF_FreeSurface(surface->surface);
         free(surface);
     }
     if (line->start)
@@ -371,26 +370,22 @@ static int ReflowLine(RTF_Context *ctx, RTF_Line *line, int width)
     return line->lineHeight;
 }
 
-static void RenderLine(RTF_Line *line, SDL_Surface *target,
-        const SDL_Rect *rect, int yOffset)
+static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, int yOffset)
 {
-    SDL_Rect srcRect;
+    SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
     SDL_Rect dstRect;
     RTF_Surface *surface;
 
     for (surface = line->startSurface; surface; surface = surface->next)
     {
-        srcRect.x = 0;
-        srcRect.y = 0;
-        srcRect.w = ((SDL_Surface *) surface->surface)->w;
-        srcRect.h = ((SDL_Surface *) surface->surface)->h;
+        SDL_Texture *texture = (SDL_Texture *)surface->surface;
+        int w, h;
 
         dstRect.x = rect->x + surface->x;
         dstRect.y = rect->y + yOffset + surface->y;
-        dstRect.w = ((SDL_Surface *) surface->surface)->w;
-        dstRect.h = ((SDL_Surface *) surface->surface)->h;
-
-        SDL_BlitSurface(surface->surface, &srcRect, target, &dstRect);
+        SDL_QueryTexture(texture, NULL, NULL, &dstRect.w, &dstRect.h);
+        SDL_RenderCopy(renderer, texture, NULL, &dstRect);
     }
 }
 
+/* vi: set ts=4 sw=4 expandtab: */

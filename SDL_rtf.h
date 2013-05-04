@@ -34,9 +34,9 @@ extern "C" {
 
 /* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
 */
-#define SDL_RTF_MAJOR_VERSION   0
-#define SDL_RTF_MINOR_VERSION   1
-#define SDL_RTF_PATCHLEVEL      1
+#define SDL_RTF_MAJOR_VERSION   2
+#define SDL_RTF_MINOR_VERSION   0
+#define SDL_RTF_PATCHLEVEL      0
 
 /* This macro can be used to fill a version structure with the compile-time
  * version of the SDL_rtf library.
@@ -112,8 +112,8 @@ typedef struct _RTF_FontEngine
      */
     int (*GetCharacterOffsets)(void *font, const char *text, int *byteOffsets, int *pixelOffsets, int maxOffsets);
 
-    /* Create a surface containing a row of the given UTF-8 text */
-    SDL_Surface *(*RenderText)(void *font, const char *text, SDL_Color fg);
+    /* Create a texture containing a row of the given UTF-8 text */
+    SDL_Texture *(*RenderText)(void *font, SDL_Renderer *renderer, const char *text, SDL_Color fg);
 
     /* Free a font */
     void (*FreeFont)(void *font);
@@ -124,7 +124,7 @@ typedef struct _RTF_FontEngine
  * Once a context is created, it can be used to load and display
  * text in Microsoft RTF format.
  */
-extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(RTF_FontEngine *fontEngine);
+extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngine);
 
 /* Set the text of an RTF context.
  * This function returns 0 if it succeeds or -1 if it fails.
@@ -153,7 +153,7 @@ extern DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
    The text is reflowed to match the width of the rectangle.
    The rendering is offset up (and clipped) by yOffset pixels.
 */
-extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Surface *surface, SDL_Rect *rect, int yOffset);
+extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset);
  
 /* Free an RTF display context */
 extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);

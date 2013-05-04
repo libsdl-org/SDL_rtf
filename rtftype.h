@@ -341,6 +341,7 @@ RTF_Line;
 
 struct _RTF_Context
 {
+    void *renderer;
     void *fontEngine;
 
     /* Storage for parsing data */

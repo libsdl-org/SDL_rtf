@@ -11,11 +11,11 @@ dnl Set various version strings - taken gratefully from the GTk sources
 # if backwards compatibility has been broken,
 # set BINARY_AGE and INTERFACE_AGE to 0.
 
-MAJOR_VERSION=0
-MINOR_VERSION=1
-MICRO_VERSION=1
-INTERFACE_AGE=1
-BINARY_AGE=1
+MAJOR_VERSION=2
+MINOR_VERSION=0
+MICRO_VERSION=0
+INTERFACE_AGE=0
+BINARY_AGE=0
 VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
 
 AC_SUBST(MAJOR_VERSION)
@@ -78,8 +78,8 @@ esac
 AM_CONDITIONAL(USE_VERSION_RC, test x$use_version_rc = xtrue)
 
 dnl Check for SDL
-SDL_VERSION=1.2.4
-AM_PATH_SDL($SDL_VERSION,
+SDL_VERSION=2.0.0
+AM_PATH_SDL2($SDL_VERSION,
             :,
 	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
 )
@@ -92,7 +92,7 @@ AC_ARG_ENABLE(SDL_ttf,
 [  --enable-SDL_ttf        Try to build the showrtf test program [default=yes]],
               , enable_SDL_ttf=yes)
 if test x$enable_SDL_ttf = xyes; then
-    AC_CHECK_LIB(SDL_ttf, TTF_Init, have_SDL_ttf=yes)
+    AC_CHECK_LIB(SDL2_ttf, TTF_Init, have_SDL_ttf=yes)
     if test x$have_SDL_ttf != xyes; then
         AC_MSG_WARN([*** Can't find the SDL_ttf library - not building showrtf
 The SDL_ttf library can be found at:
