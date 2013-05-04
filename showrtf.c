@@ -140,10 +140,16 @@ static int GetCharacterOffsets(void *_font, const char *text, int *byteOffsets, 
     return i;
 }
 
-static SDL_Surface *RenderText(void *_font, const char *text, SDL_Color fg)
+static SDL_Texture *RenderText(void *_font, SDL_Renderer *renderer, const char *text, SDL_Color fg)
 {
     TTF_Font *font = (TTF_Font *)_font;
-    return TTF_RenderUTF8_Blended(font, text, fg);
+    SDL_Texture *texture = NULL;
+    SDL_Surface *surface = TTF_RenderUTF8_Blended(font, text, fg);
+    if (surface) {
+        texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_FreeSurface(surface);
+    }
+    return texture;
 }
 
 static void FreeFont(void *_font)
@@ -158,7 +164,6 @@ static void LoadRTF(RTF_Context *ctx, const char *file)
         fprintf(stderr, "Couldn't load %s: %s\n", file, RTF_GetError());
         return;
     }
-    SDL_WM_SetCaption(RTF_GetTitle(ctx), file);
 }
 
 static void PrintUsage(const char *argv0)
@@ -176,13 +181,14 @@ static void cleanup(int exitcode)
 int main(int argc, char *argv[])
 {
     int i, start, stop;
+    int w, h;
     int done;
     int height;
     int offset;
-    SDL_Surface *screen;
+    SDL_Window *window;
+    SDL_Renderer *renderer;
     RTF_Context *ctx;
     RTF_FontEngine fontEngine;
-    Uint32 white;
     Uint8 *keystate;
 
     /* Parse command line arguments */
@@ -212,12 +218,6 @@ int main(int argc, char *argv[])
         return(1);
     }
 
-    /* Initialize the SDL library */
-    if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
-        fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-        return(2);
-    }
-
     /* Initialize the TTF library */
     if ( TTF_Init() < 0 ) {
         fprintf(stderr, "Couldn't initialize TTF: %s\n",SDL_GetError());
@@ -225,12 +225,10 @@ int main(int argc, char *argv[])
         return(3);
     }
 
-    screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, SDL_RESIZABLE);
-    if ( screen == NULL ) {
-        fprintf(stderr, "Couldn't set %dx%d video mode: %s\n", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_GetError());
+    if (SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer) < 0) {
+        fprintf(stderr, "SDL_CreateWindowAndRenderer() failed: %s\n", SDL_GetError());
         cleanup(4);
     }
-    white = SDL_MapRGB(screen->format, 255, 255, 255);
 
     /* Create and load the RTF document */
     fontEngine.version = RTF_FONT_ENGINE_VERSION;
@@ -239,24 +237,28 @@ int main(int argc, char *argv[])
     fontEngine.GetCharacterOffsets = GetCharacterOffsets;
     fontEngine.RenderText = RenderText;
     fontEngine.FreeFont = FreeFont;
-    ctx = RTF_CreateContext(&fontEngine);
+    ctx = RTF_CreateContext(renderer, &fontEngine);
     if ( ctx == NULL ) {
         fprintf(stderr, "Couldn't create RTF context: %s\n", RTF_GetError());
         cleanup(5);
     }
     LoadRTF(ctx, argv[i]);
+    SDL_SetWindowTitle(window, RTF_GetTitle(ctx));
 
     /* Render the document to the screen */
     done = 0;
     offset = 0;
-    height = RTF_GetHeight(ctx, screen->w);
+    SDL_GetWindowSize(window, &w, &h);
+    height = RTF_GetHeight(ctx, w);
     while (!done) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_VIDEORESIZE) {
+            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
+printf("Resetting window\n");
                 float ratio = (float)offset / height;
-                screen = SDL_SetVideoMode(event.resize.w, event.resize.h, 0, SDL_RESIZABLE);
-                height = RTF_GetHeight(ctx, screen->w);
+                SDL_GetWindowSize(window, &w, &h);
+                SDL_RenderSetViewport(renderer, NULL);
+                height = RTF_GetHeight(ctx, w);
                 offset = (int)(ratio * height);
             }
             if (event.type == SDL_KEYDOWN) {
@@ -269,7 +271,7 @@ int main(int argc, char *argv[])
                             --i;
                             LoadRTF(ctx, argv[i]);
                             offset = 0;
-                            height = RTF_GetHeight(ctx, screen->w);
+                            height = RTF_GetHeight(ctx, w);
                         }
                         break;
                     case SDLK_RIGHT:
@@ -277,25 +279,25 @@ int main(int argc, char *argv[])
                             ++i;
                             LoadRTF(ctx, argv[i]);
                             offset = 0;
-                            height = RTF_GetHeight(ctx, screen->w);
+                            height = RTF_GetHeight(ctx, w);
                         }
                         break;
                     case SDLK_HOME:
                         offset = 0;
                         break;
                     case SDLK_END:
-                        offset = (height - screen->h);
+                        offset = (height - h);
                         break;
                     case SDLK_PAGEUP:
-                        offset -= screen->h;
+                        offset -= h;
                         if ( offset < 0 )
                             offset = 0;
                         break;
                     case SDLK_PAGEDOWN:
                     case SDLK_SPACE:
-                        offset += screen->h;
-                        if ( offset > (height - screen->h) )
-                            offset = (height - screen->h);
+                        offset += h;
+                        if ( offset > (height - h) )
+                            offset = (height - h);
                         break;
                     default:
                         break;
@@ -305,20 +307,23 @@ int main(int argc, char *argv[])
                 done = 1;
             }
         }
-        keystate = SDL_GetKeyState(NULL);
-        if ( keystate[SDLK_UP] ) {
+        keystate = SDL_GetKeyboardState(NULL);
+        if ( keystate[SDL_SCANCODE_UP] ) {
             offset -= 1;
             if ( offset < 0 )
                 offset = 0;
         }
-        if ( keystate[SDLK_DOWN] ) {
+        if ( keystate[SDL_SCANCODE_DOWN] ) {
             offset += 1;
-            if ( offset > (height - screen->h) )
-                offset = (height - screen->h);
+            if ( offset > (height - h) )
+                offset = (height - h);
         }
-        SDL_FillRect(screen, NULL, white);
-        RTF_Render(ctx, screen, NULL, offset);
-        SDL_UpdateRect(screen, 0, 0, 0, 0);
+
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderClear(renderer);
+        RTF_Render(ctx, NULL, offset);
+        SDL_RenderPresent(renderer);
+        SDL_Delay(10);
     }
 
     /* Clean up and exit */
@@ -328,3 +333,5 @@ int main(int argc, char *argv[])
     /* Not reached, but fixes compiler warnings */
     return 0;
 }
+
+/* vi: set ts=4 sw=4 expandtab: */

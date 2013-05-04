@@ -1,12 +1,12 @@
 # Makefile.am for the SDL Rich Text Format loading library and viewer
 
-lib_LTLIBRARIES = libSDL_rtf.la
+lib_LTLIBRARIES = libSDL2_rtf.la
 
-libSDL_rtfincludedir = $(includedir)/SDL
-libSDL_rtfinclude_HEADERS =	\
+libSDL2_rtfincludedir = $(includedir)/SDL2
+libSDL2_rtfinclude_HEADERS =	\
 	SDL_rtf.h
 
-libSDL_rtf_la_SOURCES =		\
+libSDL2_rtf_la_SOURCES =		\
 	rtfactn.c		\
 	rtfdecl.h		\
 	rtfreadr.c		\
@@ -24,13 +24,13 @@ EXTRA_DIST =			\
 	autogen.sh
 
 if USE_VERSION_RC
-libSDL_rtf_la_LDFLAGS = 	\
+libSDL2_rtf_la_LDFLAGS = 	\
 	-no-undefined		\
 	-release $(LT_RELEASE)	\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) -Wl,version.o
-libSDL_rtf_la_DEPENDENCIES = version.o
+libSDL2_rtf_la_DEPENDENCIES = version.o
 else
-libSDL_rtf_la_LDFLAGS = 	\
+libSDL2_rtf_la_LDFLAGS = 	\
 	-no-undefined		\
 	-release $(LT_RELEASE)	\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
@@ -47,7 +47,7 @@ endif
 noinst_PROGRAMS = $(EXAMPLES)
 
 showrtf_SORUCES = showrtf.c
-showrtf_LDADD = libSDL_rtf.la -lSDL_ttf
+showrtf_LDADD = libSDL2_rtf.la -lSDL2_ttf
 
 # Rule to build tar-gzipped distribution package
 $(PACKAGE)-$(VERSION).tar.gz: distcheck
