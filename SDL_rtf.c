@@ -60,14 +60,14 @@ RTF_Context *RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngin
             return(NULL);
     }
     memset(ctx, 0, sizeof(*ctx));
-	ctx->renderer = renderer;
+    ctx->renderer = renderer;
         ctx->fontEngine = malloc(sizeof *fontEngine);
-	if ( ctx->fontEngine == NULL ) {
-		RTF_SetError("Out of memory");
-		free(ctx);
-		return(NULL);
-	}
-	memcpy(ctx->fontEngine, fontEngine, sizeof(*fontEngine));
+    if ( ctx->fontEngine == NULL ) {
+        RTF_SetError("Out of memory");
+        free(ctx);
+        return(NULL);
+    }
+    memcpy(ctx->fontEngine, fontEngine, sizeof(*fontEngine));
         return(ctx);
 }
 
@@ -191,7 +191,7 @@ void RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset)
     }
     ecRenderText(ctx, rect, -yOffset);
 }
- 
+
 /* Free an RTF display context */
 void RTF_FreeContext(RTF_Context *ctx)
 {
