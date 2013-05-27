@@ -16,12 +16,12 @@ libSDL2_rtf_la_SOURCES =		\
 	SDL_rtf.c
 
 EXTRA_DIST =			\
-	CHANGES			\
 	version.rc		\
 	SDL_rtf.spec		\
 	SDL_rtf.spec.in		\
 	gcc-fat.sh		\
-	autogen.sh
+	autogen.sh			\
+	*.txt
 
 if USE_VERSION_RC
 libSDL2_rtf_la_LDFLAGS = 	\
