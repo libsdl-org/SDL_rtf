@@ -21,7 +21,7 @@ EXTRA_DIST =			\
 	SDL_rtf.spec.in		\
 	gcc-fat.sh		\
 	autogen.sh			\
-	*.txt
+	$(srcdir)/*.txt
 
 if USE_VERSION_RC
 libSDL2_rtf_la_LDFLAGS = 	\
