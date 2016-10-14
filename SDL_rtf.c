@@ -141,7 +141,7 @@ int RTF_Load(RTF_Context *ctx, const char *file)
 {
     SDL_RWops *rw = SDL_RWFromFile(file, "rb");
     if ( rw == NULL ) {
-        RTF_SetError(SDL_GetError());
+        /*RTF_SetError(SDL_GetError());*/
         return -1;
     }
     return RTF_Load_RW(ctx, rw, 1);
