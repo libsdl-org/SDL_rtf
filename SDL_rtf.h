@@ -21,8 +21,8 @@
 
 /* $Id$ */
 
-#ifndef _SDL_RTF_H
-#define _SDL_RTF_H
+#ifndef SDL_RTF_H_
+#define SDL_RTF_H_
 
 #include "SDL.h"
 #include "begin_code.h"
@@ -168,5 +168,5 @@ extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_RTF_H */
+#endif /* SDL_RTF_H_ */
 
