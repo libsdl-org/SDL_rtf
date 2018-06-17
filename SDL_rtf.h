@@ -102,21 +102,21 @@ typedef struct _RTF_FontEngine
        The size is in points.
        The style is a bitmask of the constants in RTF_FontStyle.
      */
-    void *(*CreateFont)(const char *name, RTF_FontFamily family, int charset, int size, int style);
+    void *(SDLCALL *CreateFont)(const char *name, RTF_FontFamily family, int charset, int size, int style);
 
     /* Return the spacing in pixels between rows of text using this font */
-    int (*GetLineSpacing)(void *font);
+    int (SDLCALL *GetLineSpacing)(void *font);
 
     /* Fill in and return the byte and pixel offsets to each character
      * within the given UTF-8 text.
      */
-    int (*GetCharacterOffsets)(void *font, const char *text, int *byteOffsets, int *pixelOffsets, int maxOffsets);
+    int (SDLCALL *GetCharacterOffsets)(void *font, const char *text, int *byteOffsets, int *pixelOffsets, int maxOffsets);
 
     /* Create a texture containing a row of the given UTF-8 text */
-    SDL_Texture *(*RenderText)(void *font, SDL_Renderer *renderer, const char *text, SDL_Color fg);
+    SDL_Texture *(SDLCALL *RenderText)(void *font, SDL_Renderer *renderer, const char *text, SDL_Color fg);
 
     /* Free a font */
-    void (*FreeFont)(void *font);
+    void (SDLCALL *FreeFont)(void *font);
 } RTF_FontEngine;
 
 
