@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer;
     RTF_Context *ctx;
     RTF_FontEngine fontEngine;
-    Uint8 *keystate;
+    const Uint8 *keystate;
 
     /* Parse command line arguments */
     for ( i = 1; i < argc; ++i ) {
@@ -254,8 +254,8 @@ int main(int argc, char *argv[])
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
-printf("Resetting window\n");
                 float ratio = (float)offset / height;
+                printf("Resetting window\n");
                 SDL_GetWindowSize(window, &w, &h);
                 SDL_RenderSetViewport(renderer, NULL);
                 height = RTF_GetHeight(ctx, w);
