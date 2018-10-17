@@ -21,8 +21,8 @@
 
 /* $Id$ */
 
-#ifndef _SDL_RTF_H
-#define _SDL_RTF_H
+#ifndef SDL_RTF_H_
+#define SDL_RTF_H_
 
 #include "SDL.h"
 #include "begin_code.h"
@@ -41,11 +41,11 @@ extern "C" {
 /* This macro can be used to fill a version structure with the compile-time
  * version of the SDL_rtf library.
  */
-#define SDL_RTF_VERSION(X)                                              \
-{                                                                       \
-        (X)->major = SDL_RTF_MAJOR_VERSION;                                \
-        (X)->minor = SDL_RTF_MINOR_VERSION;                                \
-        (X)->patch = SDL_RTF_PATCHLEVEL;                                \
+#define SDL_RTF_VERSION(X)                          \
+{                                                   \
+        (X)->major = SDL_RTF_MAJOR_VERSION;         \
+        (X)->minor = SDL_RTF_MINOR_VERSION;         \
+        (X)->patch = SDL_RTF_PATCHLEVEL;            \
 }
 
 /* Backwards compatibility */
@@ -154,10 +154,10 @@ extern DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
    The rendering is offset up (and clipped) by yOffset pixels.
 */
 extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Surface *surface, SDL_Rect *rect, int yOffset);
- 
+
 /* Free an RTF display context */
 extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
- 
+
 /* We'll use SDL for reporting errors */
 #define RTF_SetError    SDL_SetError
 #define RTF_GetError    SDL_GetError
@@ -168,5 +168,5 @@ extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
 #endif
 #include "close_code.h"
 
-#endif /* _SDL_RTF_H */
+#endif /* SDL_RTF_H_ */
 

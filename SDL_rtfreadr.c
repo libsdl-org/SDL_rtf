@@ -394,3 +394,4 @@ static void RenderLine(RTF_Line *line, SDL_Surface *target,
     }
 }
 
+/* vi: set ts=4 sw=4 expandtab: */

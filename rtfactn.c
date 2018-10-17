@@ -413,3 +413,4 @@ int ecParseSpecialKeyword(RTF_Context *ctx, IPFN ipfn)
     return ecOK;
 }
 
+/* vi: set ts=4 sw=4 expandtab: */

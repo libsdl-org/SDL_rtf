@@ -82,6 +82,7 @@ static Uint16 UTF8_to_UNICODE(const char *utf8, int *advance)
     *advance = (i+1);
     return ch;
 }
+
 static void *CreateFont(const char *name, RTF_FontFamily family, int charset, int size, int style)
 {
     int index;
@@ -183,7 +184,7 @@ int main(int argc, char *argv[])
     RTF_Context *ctx;
     RTF_FontEngine fontEngine;
     Uint32 white;
-    Uint8 *keystate;
+    const Uint8 *keystate;
 
     /* Parse command line arguments */
     for ( i = 1; i < argc; ++i ) {
@@ -328,3 +329,5 @@ int main(int argc, char *argv[])
     /* Not reached, but fixes compiler warnings */
     return 0;
 }
+
+/* vi: set ts=4 sw=4 expandtab: */
