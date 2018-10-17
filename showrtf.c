@@ -83,7 +83,7 @@ static Uint16 UTF8_to_UNICODE(const char *utf8, int *advance)
     return ch;
 }
 
-static void *CreateFont(const char *name, RTF_FontFamily family, int charset, int size, int style)
+static void * SDLCALL CreateFont(const char *name, RTF_FontFamily family, int charset, int size, int style)
 {
     int index;
     TTF_Font *font;
@@ -109,13 +109,13 @@ static void *CreateFont(const char *name, RTF_FontFamily family, int charset, in
     return font;
 }
 
-static int GetLineSpacing(void *_font)
+static int SDLCALL GetLineSpacing(void *_font)
 {
     TTF_Font *font = (TTF_Font *)_font;
     return TTF_FontLineSkip(font);
 }
 
-static int GetCharacterOffsets(void *_font, const char *text, int *byteOffsets, int *pixelOffsets, int maxOffsets)
+static int SDLCALL GetCharacterOffsets(void *_font, const char *text, int *byteOffsets, int *pixelOffsets, int maxOffsets)
 {
     TTF_Font *font = (TTF_Font *)_font;
     int i = 0;
@@ -141,13 +141,13 @@ static int GetCharacterOffsets(void *_font, const char *text, int *byteOffsets, 
     return i;
 }
 
-static SDL_Surface *RenderText(void *_font, const char *text, SDL_Color fg)
+static SDL_Surface * SDLCALL RenderText(void *_font, const char *text, SDL_Color fg)
 {
     TTF_Font *font = (TTF_Font *)_font;
     return TTF_RenderUTF8_Blended(font, text, fg);
 }
 
-static void FreeFont(void *_font)
+static void SDLCALL FreeFont(void *_font)
 {
     TTF_Font *font = (TTF_Font *)_font;
     TTF_CloseFont(font);
