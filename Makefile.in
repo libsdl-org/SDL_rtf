@@ -93,9 +93,12 @@ libSDL_rtf_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(libSDL_rtf_la_LDFLAGS) $(LDFLAGS) -o $@
 @HAVE_SDL_TTF_TRUE@am__EXEEXT_1 = showrtf$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
-showrtf_SOURCES = showrtf.c
-showrtf_OBJECTS = showrtf.$(OBJEXT)
+am_showrtf_OBJECTS = showrtf-showrtf.$(OBJEXT)
+showrtf_OBJECTS = $(am_showrtf_OBJECTS)
 showrtf_DEPENDENCIES = libSDL_rtf.la
+showrtf_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(showrtf_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -109,8 +112,8 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libSDL_rtf_la_SOURCES) showrtf.c
-DIST_SOURCES = $(libSDL_rtf_la_SOURCES) showrtf.c
+SOURCES = $(libSDL_rtf_la_SOURCES) $(showrtf_SOURCES)
+DIST_SOURCES = $(libSDL_rtf_la_SOURCES) $(showrtf_SOURCES)
 HEADERS = $(libSDL_rtfinclude_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -190,6 +193,8 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 RANLIB = @RANLIB@
+SDLTTF_CFLAGS = @SDLTTF_CFLAGS@
+SDLTTF_LIBS = @SDLTTF_LIBS@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_CONFIG = @SDL_CONFIG@
 SDL_LIBS = @SDL_LIBS@
@@ -286,8 +291,9 @@ EXTRA_DIST = \
 @USE_VERSION_RC_TRUE@libSDL_rtf_la_DEPENDENCIES = version.o
 @HAVE_SDL_TTF_FALSE@EXAMPLES = 
 @HAVE_SDL_TTF_TRUE@EXAMPLES = showrtf
-showrtf_SORUCES = showrtf.c
-showrtf_LDADD = libSDL_rtf.la -lSDL_ttf
+showrtf_SOURCES = showrtf.c
+showrtf_LDADD = libSDL_rtf.la @SDLTTF_LIBS@
+showrtf_CFLAGS = @SDLTTF_CFLAGS@
 all: all-am
 
 .SUFFIXES:
@@ -372,7 +378,7 @@ clean-noinstPROGRAMS:
 	rm -f $$list
 showrtf$(EXEEXT): $(showrtf_OBJECTS) $(showrtf_DEPENDENCIES) 
 	@rm -f showrtf$(EXEEXT)
-	$(LINK) $(showrtf_OBJECTS) $(showrtf_LDADD) $(LIBS)
+	$(showrtf_LINK) $(showrtf_OBJECTS) $(showrtf_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -384,7 +390,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SDL_rtfreadr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtfactn.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rtfreadr.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/showrtf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/showrtf-showrtf.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -406,6 +412,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+showrtf-showrtf.o: showrtf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(showrtf_CFLAGS) $(CFLAGS) -MT showrtf-showrtf.o -MD -MP -MF $(DEPDIR)/showrtf-showrtf.Tpo -c -o showrtf-showrtf.o `test -f 'showrtf.c' || echo '$(srcdir)/'`showrtf.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/showrtf-showrtf.Tpo $(DEPDIR)/showrtf-showrtf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='showrtf.c' object='showrtf-showrtf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(showrtf_CFLAGS) $(CFLAGS) -c -o showrtf-showrtf.o `test -f 'showrtf.c' || echo '$(srcdir)/'`showrtf.c
+
+showrtf-showrtf.obj: showrtf.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(showrtf_CFLAGS) $(CFLAGS) -MT showrtf-showrtf.obj -MD -MP -MF $(DEPDIR)/showrtf-showrtf.Tpo -c -o showrtf-showrtf.obj `if test -f 'showrtf.c'; then $(CYGPATH_W) 'showrtf.c'; else $(CYGPATH_W) '$(srcdir)/showrtf.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/showrtf-showrtf.Tpo $(DEPDIR)/showrtf-showrtf.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='showrtf.c' object='showrtf-showrtf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(showrtf_CFLAGS) $(CFLAGS) -c -o showrtf-showrtf.obj `if test -f 'showrtf.c'; then $(CYGPATH_W) 'showrtf.c'; else $(CYGPATH_W) '$(srcdir)/showrtf.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
