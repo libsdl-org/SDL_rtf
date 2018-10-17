@@ -61,14 +61,14 @@ RTF_Context *RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngin
     }
     memset(ctx, 0, sizeof(*ctx));
     ctx->renderer = renderer;
-        ctx->fontEngine = malloc(sizeof *fontEngine);
+    ctx->fontEngine = malloc(sizeof *fontEngine);
     if ( ctx->fontEngine == NULL ) {
         RTF_SetError("Out of memory");
         free(ctx);
         return(NULL);
     }
     memcpy(ctx->fontEngine, fontEngine, sizeof(*fontEngine));
-        return(ctx);
+    return(ctx);
 }
 
 /* Set the text of an RTF context.
