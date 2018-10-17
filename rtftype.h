@@ -241,8 +241,7 @@ typedef enum
 }
 FFAM;
 
-#ifndef _SDL_RTF_H
-
+#ifndef SDL_RTF_H_
 typedef enum
 {
     RTF_FontDefault,    /* Unknown or default font */
@@ -268,8 +267,7 @@ typedef enum
     RTF_FontUnderline = 0x04
 }
 RTF_FontStyle;
-
-#endif // !_SDL_RTF_H
+#endif /* !SDL_RTF_H_ */
 
 typedef struct _RTF_Font
 {
@@ -380,7 +378,7 @@ struct _RTF_Context
     RTF_Line *start;
     RTF_Line *last;
 };
-#ifndef _SDL_RTF_H
+#ifndef SDL_RTF_H_
 typedef struct _RTF_Context RTF_Context;
 #endif
 

@@ -821,3 +821,4 @@ static void FreeTextBlock(RTF_TextBlock *text)
     free(text);
 }
 
+/* vi: set ts=4 sw=4 expandtab: */
