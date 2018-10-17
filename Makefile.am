@@ -46,8 +46,9 @@ EXAMPLES =
 endif
 noinst_PROGRAMS = $(EXAMPLES)
 
-showrtf_SORUCES = showrtf.c
-showrtf_LDADD = libSDL2_rtf.la -lSDL2_ttf
+showrtf_SOURCES = showrtf.c
+showrtf_LDADD = libSDL2_rtf.la @SDLTTF_LIBS@
+showrtf_CFLAGS = @SDLTTF_CFLAGS@
 
 # Rule to build tar-gzipped distribution package
 $(PACKAGE)-$(VERSION).tar.gz: distcheck

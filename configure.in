@@ -88,11 +88,12 @@ LIBS="$LIBS $SDL_LIBS"
 
 dnl Check for SDL_ttf
 have_SDL_ttf=no
-AC_ARG_ENABLE(SDL_ttf,
-[  --enable-SDL_ttf        Try to build the showrtf test program [default=yes]],
-              , enable_SDL_ttf=yes)
+AC_ARG_ENABLE([SDL_ttf], [AC_HELP_STRING([--enable-SDL_ttf], [Try to build the showrtf test program [default=yes]])],
+              [], [enable_SDL_ttf=yes])
 if test x$enable_SDL_ttf = xyes; then
-    AC_CHECK_LIB(SDL2_ttf, TTF_Init, have_SDL_ttf=yes)
+    PKG_CHECK_MODULES([SDLTTF], [SDL2_ttf], [have_SDL_ttf=yes], [dnl
+        AC_CHECK_LIB([SDL2_ttf],[TTF_Init],[have_SDL_ttf=yes; SDLTTF_LIBS="-lSDL2_ttf"],[],[])
+    ])
     if test x$have_SDL_ttf != xyes; then
         AC_MSG_WARN([*** Can't find the SDL_ttf library - not building showrtf
 The SDL_ttf library can be found at:
