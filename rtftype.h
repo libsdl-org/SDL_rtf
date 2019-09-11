@@ -6,7 +6,7 @@
 #ifndef _RTFTYPE_H
 #define _RTFTYPE_H
 
-#ifndef bool
+#if !defined(__cplusplus) && !defined(bool)
 typedef char bool;
 #endif
 
