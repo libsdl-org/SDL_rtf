@@ -379,7 +379,6 @@ static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, i
     for (surface = line->startSurface; surface; surface = surface->next)
     {
         SDL_Texture *texture = (SDL_Texture *)surface->surface;
-        int w, h;
 
         dstRect.x = rect->x + surface->x;
         dstRect.y = rect->y + yOffset + surface->y;
