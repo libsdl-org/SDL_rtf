@@ -25,7 +25,7 @@ BEGIN
             VALUE "FileDescription", "SDL_rtf\0"
             VALUE "FileVersion", "0, 1, 1, 0\0"
             VALUE "InternalName", "SDL_rtf\0"
-            VALUE "LegalCopyright", "Copyright © 2019 Sam Lantinga\0"
+            VALUE "LegalCopyright", "Copyright © 2020 Sam Lantinga\0"
             VALUE "OriginalFilename", "SDL_rtf.dll\0"
             VALUE "ProductName", "Simple DirectMedia Layer\0"
             VALUE "ProductVersion", "0, 1, 1, 0\0"
