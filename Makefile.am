@@ -17,6 +17,7 @@ libSDL2_rtf_la_SOURCES =		\
 
 EXTRA_DIST =			\
 	version.rc		\
+	Makefile.os2		\
 	SDL_rtf.spec		\
 	SDL_rtf.spec.in		\
 	gcc-fat.sh		\
