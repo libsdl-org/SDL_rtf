@@ -60,7 +60,7 @@ case "$host" in
     *-*-beos*)
         ac_default_prefix=/boot/develop/tools/gnupro
         ;;
-    *-*-cygwin* | *-*-mingw32*)
+    *-*-cygwin* | *-*-mingw*)
         if test "$build" != "$host"; then # cross-compiling
             # Default cross-compile location
             ac_default_prefix=/usr/local/cross-tools/$host
@@ -95,8 +95,8 @@ if test x$enable_SDL_ttf = xyes; then
         AC_CHECK_LIB([SDL2_ttf],[TTF_Init],[have_SDL_ttf=yes; SDLTTF_LIBS="-lSDL2_ttf"],[],[])
     ])
     if test x$have_SDL_ttf != xyes; then
-        AC_MSG_WARN([*** Can't find the SDL_ttf library - not building showrtf
-The SDL_ttf library can be found at:
+        AC_MSG_WARN([*** Can't find the SDL2_ttf library - not building showrtf
+The SDL2_ttf library can be found at:
 http://www.libsdl.org/projects/SDL_ttf/
 ])
     fi
