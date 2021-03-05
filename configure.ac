@@ -1,5 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(README.txt)
+AC_INIT
+AC_CONFIG_MACRO_DIR([acinclude])
+AC_CONFIG_SRCDIR([SDL_rtf.c])
 
 dnl Set various version strings - taken gratefully from the GTk sources
 
@@ -45,7 +47,6 @@ dnl Setup for automake
 AM_INIT_AUTOMAKE(SDL_rtf, $VERSION)
 
 dnl Check for tools
-AC_PROG_LIBTOOL
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
@@ -88,7 +89,7 @@ LIBS="$LIBS $SDL_LIBS"
 
 dnl Check for SDL_ttf
 have_SDL_ttf=no
-AC_ARG_ENABLE([SDL_ttf], [AC_HELP_STRING([--enable-SDL_ttf], [Try to build the showrtf test program [default=yes]])],
+AC_ARG_ENABLE([SDL_ttf], [AS_HELP_STRING([--enable-SDL_ttf], [Try to build the showrtf test program [default=yes]])],
               [], [enable_SDL_ttf=yes])
 if test x$enable_SDL_ttf = xyes; then
     PKG_CHECK_MODULES([SDLTTF], [SDL2_ttf], [have_SDL_ttf=yes], [dnl
@@ -106,7 +107,8 @@ AM_CONDITIONAL(HAVE_SDL_TTF, test x$have_SDL_ttf = xyes)
 AC_SUBST([WINDRES])
 
 # Finally create all the generated files
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 SDL_rtf.spec
 ])
+AC_OUTPUT
