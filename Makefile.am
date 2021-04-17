@@ -1,4 +1,6 @@
 # Makefile.am for the SDL Rich Text Format loading library and viewer
+ACLOCAL_AMFLAGS = -I acinclude
+AUTOMAKE_OPTIONS= foreign
 
 lib_LTLIBRARIES = libSDL_rtf.la
 
