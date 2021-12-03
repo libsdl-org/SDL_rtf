@@ -19,13 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "SDL_rtf.h"
 #include "SDL_rtfreadr.h"
 
@@ -72,7 +65,7 @@ void RTF_FreeSurface(void *surface)
  */
 void *RTF_CreateColor(int r, int g, int b)
 {
-    SDL_Color *color = (SDL_Color *) malloc(sizeof(*color));
+    SDL_Color *color = (SDL_Color *) SDL_malloc(sizeof(*color));
     if (!color)
         return NULL;
     color->r = r;
@@ -87,8 +80,7 @@ void *RTF_CreateColor(int r, int g, int b)
  */
 void RTF_FreeColor(void *color)
 {
-    if (color)
-        free(color);
+    SDL_free(color);
 }
 
 /*
@@ -176,7 +168,7 @@ static RTF_Surface *CreateSurface(RTF_Context *ctx,
         RTF_TextBlock *textBlock, int offset, int numChars)
 {
     SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
-    RTF_Surface *surface = (RTF_Surface *) malloc(sizeof(*surface));
+    RTF_Surface *surface = (RTF_Surface *) SDL_malloc(sizeof(*surface));
     SDL_Color color;
 
     if (surface)
@@ -191,12 +183,12 @@ static RTF_Surface *CreateSurface(RTF_Context *ctx,
         if (textBlock->color)
             color = *(SDL_Color *) textBlock->color;
         else
-            memset(&color, 0, sizeof(color));
+            SDL_memset(&color, 0, sizeof(color));
         surface->surface = ((RTF_FontEngine *) ctx->fontEngine)->RenderText(textBlock->font, renderer, text, color);
         *end = ch;
         if (!surface->surface)
         {
-            free(surface);
+            SDL_free(surface);
             return (NULL);
         }
         surface->x = 0;
@@ -228,7 +220,7 @@ static int TextWithinWidth(RTF_TextBlock *textBlock, int offset,
         for (wrapIndex = offset + num - 1; wrapIndex > offset;
              --wrapIndex)
         {
-            if (isspace(
+            if (SDL_isspace(
                     textBlock->text[textBlock->byteOffsets[wrapIndex]]))
                 break;
         }
@@ -248,7 +240,7 @@ static int ReflowLine(RTF_Context *ctx, RTF_Line *line, int width)
         RTF_Surface *surface = line->startSurface;
         line->startSurface = surface->next;
         RTF_FreeSurface(surface->surface);
-        free(surface);
+        SDL_free(surface);
     }
     if (line->start)
     {

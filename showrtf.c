@@ -19,13 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
 /* A simple program to test the RTF rendering of the SDL_rtf library */
-
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 
 #include "SDL.h"
 #include "SDL_ttf.h"
@@ -163,21 +157,20 @@ static void SDLCALL FreeFont(void *_font)
 static void LoadRTF(RTF_Context *ctx, const char *file)
 {
     if ( RTF_Load(ctx, file) < 0 ) {
-        fprintf(stderr, "Couldn't load %s: %s\n", file, RTF_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load %s: %s\n", file, RTF_GetError());
         return;
     }
 }
 
 static void PrintUsage(const char *argv0)
 {
-    printf("Usage: %s -fdefault font.ttf [-froman font.ttf] [-fswiss font.ttf] [-fmodern font.ttf] [-fscript font.ttf] [-fdecor font.ttf] [-ftech font.ttf] file.rtf\n", argv0);
+    SDL_Log("Usage: %s -fdefault font.ttf [-froman font.ttf] [-fswiss font.ttf] [-fmodern font.ttf] [-fscript font.ttf] [-fdecor font.ttf] [-ftech font.ttf] file.rtf\n", argv0);
 }
 
-static void cleanup(int exitcode)
+static void cleanup(void)
 {
     TTF_Quit();
     SDL_Quit();
-    exit(exitcode);
 }
 
 int main(int argc, char *argv[])
@@ -195,19 +188,19 @@ int main(int argc, char *argv[])
 
     /* Parse command line arguments */
     for ( i = 1; i < argc; ++i ) {
-        if ( strcmp(argv[i], "-fdefault") == 0 ) {
+        if ( SDL_strcmp(argv[i], "-fdefault") == 0 ) {
             FontList[FontFamilyToIndex(RTF_FontDefault)] = argv[++i];
-        } else if ( strcmp(argv[i], "-froman") == 0 ) {
+        } else if ( SDL_strcmp(argv[i], "-froman") == 0 ) {
             FontList[FontFamilyToIndex(RTF_FontRoman)] = argv[++i];
-        } else if ( strcmp(argv[i], "-fswiss") == 0 ) {
+        } else if ( SDL_strcmp(argv[i], "-fswiss") == 0 ) {
             FontList[FontFamilyToIndex(RTF_FontSwiss)] = argv[++i];
-        } else if ( strcmp(argv[i], "-fmodern") == 0 ) {
+        } else if ( SDL_strcmp(argv[i], "-fmodern") == 0 ) {
             FontList[FontFamilyToIndex(RTF_FontModern)] = argv[++i];
-        } else if ( strcmp(argv[i], "-fscript") == 0 ) {
+        } else if ( SDL_strcmp(argv[i], "-fscript") == 0 ) {
             FontList[FontFamilyToIndex(RTF_FontScript)] = argv[++i];
-        } else if ( strcmp(argv[i], "-fdecor") == 0 ) {
+        } else if ( SDL_strcmp(argv[i], "-fdecor") == 0 ) {
             FontList[FontFamilyToIndex(RTF_FontDecor)] = argv[++i];
-        } else if ( strcmp(argv[i], "-ftech") == 0 ) {
+        } else if ( SDL_strcmp(argv[i], "-ftech") == 0 ) {
             FontList[FontFamilyToIndex(RTF_FontTech)] = argv[++i];
         } else {
             break;
@@ -222,14 +215,15 @@ int main(int argc, char *argv[])
 
     /* Initialize the TTF library */
     if ( TTF_Init() < 0 ) {
-        fprintf(stderr, "Couldn't initialize TTF: %s\n",SDL_GetError());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't initialize TTF: %s\n",SDL_GetError());
         SDL_Quit();
         return(3);
     }
 
     if (SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer) < 0) {
-        fprintf(stderr, "SDL_CreateWindowAndRenderer() failed: %s\n", SDL_GetError());
-        cleanup(4);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_CreateWindowAndRenderer() failed: %s\n", SDL_GetError());
+        cleanup();
+        return(4);
     }
 
     /* Create and load the RTF document */
@@ -241,8 +235,9 @@ int main(int argc, char *argv[])
     fontEngine.FreeFont = FreeFont;
     ctx = RTF_CreateContext(renderer, &fontEngine);
     if ( ctx == NULL ) {
-        fprintf(stderr, "Couldn't create RTF context: %s\n", RTF_GetError());
-        cleanup(5);
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't create RTF context: %s\n", RTF_GetError());
+        cleanup();
+        return(5);
     }
     LoadRTF(ctx, argv[i]);
     SDL_SetWindowTitle(window, RTF_GetTitle(ctx));
@@ -257,7 +252,7 @@ int main(int argc, char *argv[])
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
                 float ratio = (float)offset / height;
-                printf("Resetting window\n");
+                SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Resetting window\n");
                 SDL_GetWindowSize(window, &w, &h);
                 SDL_RenderSetViewport(renderer, NULL);
                 height = RTF_GetHeight(ctx, w);
@@ -330,9 +325,8 @@ int main(int argc, char *argv[])
 
     /* Clean up and exit */
     RTF_FreeContext(ctx);
-    cleanup(0);
+    cleanup();
 
-    /* Not reached, but fixes compiler warnings */
     return 0;
 }
 

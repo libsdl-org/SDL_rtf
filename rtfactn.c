@@ -3,11 +3,8 @@
  * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnrtfspec/html/rtfspec.asp
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stddef.h>
-#include <ctype.h>
+#include "SDL.h"
+
 #include "rtftype.h"
 #include "rtfdecl.h"
 
@@ -235,13 +232,13 @@ int ecParseSpecialProperty(RTF_Context *ctx, IPROP iprop, int val)
             ctx->values[2] = val;
             return ecOK;
         case ipropPard:
-            memset(&ctx->pap, 0, sizeof(ctx->pap));
+            SDL_memset(&ctx->pap, 0, sizeof(ctx->pap));
             return ecOK;
         case ipropPlain:
-            memset(&ctx->chp, 0, sizeof(ctx->chp));
+            SDL_memset(&ctx->chp, 0, sizeof(ctx->chp));
             return ecOK;
         case ipropSectd:
-            memset(&ctx->sep, 0, sizeof(ctx->sep));
+            SDL_memset(&ctx->sep, 0, sizeof(ctx->sep));
             return ecOK;
         default:
             return ecBadTable;
@@ -269,7 +266,7 @@ int ecTranslateKeyword(RTF_Context *ctx, char *szKeyword, int param,
 
     /* search for szKeyword in rgsymRtf */
     for (isym = 0; isym < isymMax; isym++)
-        if (strcmp(szKeyword, rgsymRtf[isym].szKeyword) == 0)
+        if (SDL_strcmp(szKeyword, rgsymRtf[isym].szKeyword) == 0)
             break;
     if (isym == isymMax)        /* control word not found */
     {
@@ -360,24 +357,21 @@ int ecEndGroupAction(RTF_Context *ctx, RDS rds)
     switch (ctx->rds)
     {
         case rdsTitle:
-            if (ctx->title)
-                free(ctx->title);
+            SDL_free(ctx->title);
             ctx->data[ctx->datapos] = '\0';
-            ctx->title = *ctx->data ? strdup(ctx->data) : NULL;
+            ctx->title = *ctx->data ? SDL_strdup(ctx->data) : NULL;
             ctx->datapos = 0;
             break;
         case rdsSubject:
-            if (ctx->subject)
-                free(ctx->subject);
+            SDL_free(ctx->subject);
             ctx->data[ctx->datapos] = '\0';
-            ctx->subject = *ctx->data ? strdup(ctx->data) : NULL;
+            ctx->subject = *ctx->data ? SDL_strdup(ctx->data) : NULL;
             ctx->datapos = 0;
             break;
         case rdsAuthor:
-            if (ctx->author)
-                free(ctx->author);
+            SDL_free(ctx->author);
             ctx->data[ctx->datapos] = '\0';
-            ctx->author = *ctx->data ? strdup(ctx->data) : NULL;
+            ctx->author = *ctx->data ? SDL_strdup(ctx->data) : NULL;
             ctx->datapos = 0;
             break;
         default:

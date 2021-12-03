@@ -19,11 +19,6 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-/* $Id$ */
-
-#include <stdlib.h>
-#include <string.h>
-
 #include "SDL.h"
 #include "SDL_rtf.h"
 
@@ -54,20 +49,20 @@ RTF_Context *RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngin
             return(NULL);
     }
 
-    ctx = (RTF_Context *)malloc(sizeof(*ctx));
+    ctx = (RTF_Context *)SDL_malloc(sizeof(*ctx));
     if ( ctx == NULL ) {
             RTF_SetError("Out of memory");
             return(NULL);
     }
-    memset(ctx, 0, sizeof(*ctx));
+    SDL_memset(ctx, 0, sizeof(*ctx));
     ctx->renderer = renderer;
-    ctx->fontEngine = malloc(sizeof *fontEngine);
+    ctx->fontEngine = SDL_malloc(sizeof *fontEngine);
     if ( ctx->fontEngine == NULL ) {
         RTF_SetError("Out of memory");
-        free(ctx);
+        SDL_free(ctx);
         return(NULL);
     }
-    memcpy(ctx->fontEngine, fontEngine, sizeof(*fontEngine));
+    SDL_memcpy(ctx->fontEngine, fontEngine, sizeof(*fontEngine));
     return(ctx);
 }
 
@@ -197,8 +192,8 @@ void RTF_FreeContext(RTF_Context *ctx)
 {
     /* Free it all! */
     ecClearContext(ctx);
-    free(ctx->fontEngine);
-    free(ctx);
+    SDL_free(ctx->fontEngine);
+    SDL_free(ctx);
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

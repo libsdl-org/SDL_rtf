@@ -3,10 +3,8 @@
  * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnrtfspec/html/rtfspec.asp
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "SDL.h"
+
 #include "rtftype.h"
 #include "rtfdecl.h"
 
@@ -20,13 +18,13 @@ static void FreeTextBlock(RTF_TextBlock *text);
 int ecAddFontEntry(RTF_Context *ctx, int number, const char *name,
         int family, int charset)
 {
-    RTF_FontEntry *entry = (RTF_FontEntry *) malloc(sizeof(*entry));
+    RTF_FontEntry *entry = (RTF_FontEntry *) SDL_malloc(sizeof(*entry));
 
     if (!entry)
         return ecStackOverflow;
 
     entry->number = number;
-    entry->name = strdup(name);
+    entry->name = SDL_strdup(name);
     entry->family = (RTF_FontFamily) family;
     entry->charset = charset;
     entry->fonts = NULL;
@@ -91,7 +89,7 @@ void *ecLookupFont(RTF_Context *ctx)
     }
 
     /* Create a new font entry */
-    font = (RTF_Font *) malloc(sizeof(*font));
+    font = (RTF_Font *) SDL_malloc(sizeof(*font));
     if (!font)
         return NULL;
 
@@ -99,7 +97,7 @@ void *ecLookupFont(RTF_Context *ctx)
             entry->family, entry->charset, size, style);
     if (!font->font)
     {
-        free(font);
+        SDL_free(font);
         return NULL;
     }
     font->size = size;
@@ -119,16 +117,16 @@ int ecClearFonts(RTF_Context *ctx)
         RTF_FontEntry *entry = ctx->fontTable;
 
         ctx->fontTable = entry->next;
-        free(entry->name);
+        SDL_free(entry->name);
         while (entry->fonts)
         {
             RTF_Font *font = entry->fonts;
 
             entry->fonts = font->next;
             RTF_FreeFont(ctx->fontEngine, font->font);
-            free(font);
+            SDL_free(font);
         }
-        free(entry);
+        SDL_free(entry);
     }
     return ecOK;
 }
@@ -139,7 +137,7 @@ int ecClearFonts(RTF_Context *ctx)
 int ecAddColorEntry(RTF_Context *ctx, int r, int g, int b)
 {
     RTF_ColorEntry *ptr;
-    RTF_ColorEntry *entry = (RTF_ColorEntry *) malloc(sizeof(*entry));
+    RTF_ColorEntry *entry = (RTF_ColorEntry *) SDL_malloc(sizeof(*entry));
 
     if (!entry)
         return ecStackOverflow;
@@ -186,7 +184,7 @@ int ecClearColors(RTF_Context *ctx)
     {
         e2 = e->next;
         RTF_FreeColor(e->color);
-        free(e);
+        SDL_free(e);
     }
     return ecOK;
 }
@@ -204,7 +202,7 @@ int ecAddLine(RTF_Context *ctx)
     if (!font)
         return ecFontNotFound;
 
-    line = (RTF_Line *) malloc(sizeof(*line));
+    line = (RTF_Line *) SDL_malloc(sizeof(*line));
     if (!line)
         return ecStackOverflow;
 
@@ -275,17 +273,17 @@ int ecAddText(RTF_Context *ctx, const char *text)
     }
     line = ctx->last;
 
-    textBlock = (RTF_TextBlock *) malloc(sizeof(*textBlock));
+    textBlock = (RTF_TextBlock *) SDL_malloc(sizeof(*textBlock));
     if (!textBlock)
         return ecStackOverflow;
 
     textBlock->font = font;
     textBlock->color = ecLookupColor(ctx);
-    numChars = strlen(text) + 1;
+    numChars = SDL_strlen(text) + 1;
     textBlock->tabs = line->tabs;
-    textBlock->text = strdup(text);
-    textBlock->byteOffsets = (int *) malloc(numChars * sizeof(int));
-    textBlock->pixelOffsets = (int *) malloc(numChars * sizeof(int));
+    textBlock->text = SDL_strdup(text);
+    textBlock->byteOffsets = (int *) SDL_malloc(numChars * sizeof(int));
+    textBlock->pixelOffsets = (int *) SDL_malloc(numChars * sizeof(int));
     if (!textBlock->text || !textBlock->byteOffsets ||
             !textBlock->pixelOffsets)
     {
@@ -334,36 +332,36 @@ int ecClearContext(RTF_Context *ctx)
 {
     if (ctx->data)
     {
-        free(ctx->data);
+        SDL_free(ctx->data);
         ctx->data = NULL;
         ctx->datapos = 0;
         ctx->datamax = 0;
     }
-    memset(ctx->values, 0, sizeof(ctx->values));
+    SDL_memset(ctx->values, 0, sizeof(ctx->values));
 
     ecClearFonts(ctx);
     ecClearColors(ctx);
 
     if (ctx->title)
     {
-        free(ctx->title);
+        SDL_free(ctx->title);
         ctx->title = NULL;
     }
     if (ctx->subject)
     {
-        free(ctx->subject);
+        SDL_free(ctx->subject);
         ctx->subject = NULL;
     }
     if (ctx->author)
     {
-        free(ctx->author);
+        SDL_free(ctx->author);
         ctx->author = NULL;
     }
 
-    memset(&ctx->chp, 0, sizeof(ctx->chp));
-    memset(&ctx->pap, 0, sizeof(ctx->pap));
-    memset(&ctx->sep, 0, sizeof(ctx->sep));
-    memset(&ctx->dop, 0, sizeof(ctx->dop));
+    SDL_memset(&ctx->chp, 0, sizeof(ctx->chp));
+    SDL_memset(&ctx->pap, 0, sizeof(ctx->pap));
+    SDL_memset(&ctx->sep, 0, sizeof(ctx->sep));
+    SDL_memset(&ctx->dop, 0, sizeof(ctx->dop));
 
     ecClearLines(ctx);
 
@@ -460,11 +458,11 @@ int ecRtfParse(RTF_Context *ctx)
                         if (ctx->ris != risHex)
                             return ecAssertion;
                         b = b << 4;
-                        if (isdigit(ch))
+                        if (SDL_isdigit(ch))
                             b += (char) ch - '0';
                         else
                         {
-                            if (islower(ch))
+                            if (SDL_islower(ch))
                             {
                                 if (ch < 'a' || ch > 'f')
                                     return ecInvalidHex;
@@ -505,7 +503,7 @@ int ecRtfParse(RTF_Context *ctx)
  */
 int ecPushRtfState(RTF_Context *ctx)
 {
-    SAVE *psaveNew = malloc(sizeof(SAVE));
+    SAVE *psaveNew = SDL_malloc(sizeof(SAVE));
 
     if (!psaveNew)
         return ecStackOverflow;
@@ -554,7 +552,7 @@ int ecPopRtfState(RTF_Context *ctx)
     psaveOld = ctx->psave;
     ctx->psave = ctx->psave->pNext;
     ctx->cGroup--;
-    free(psaveOld);
+    SDL_free(psaveOld);
     return ecOK;
 }
 
@@ -579,13 +577,13 @@ int ecParseRtfKeyword(RTF_Context *ctx)
     szParameter[0] = '\0';
     if (ecRtfGetChar(ctx, &ch) != ecOK)
         return ecEndOfFile;
-    if (!isalpha(ch))           /* a control symbol; no delimiter. */
+    if (!SDL_isalpha(ch))           /* a control symbol; no delimiter. */
     {
         szKeyword[0] = (char) ch;
         szKeyword[1] = '\0';
         return ecTranslateKeyword(ctx, szKeyword, 0, fParam);
     }
-    for (pch = szKeyword; isalpha(ch);)
+    for (pch = szKeyword; SDL_isalpha(ch);)
     {
         *pch++ = (char) ch;
         if (ecRtfGetChar(ctx, &ch) != ecOK)
@@ -598,20 +596,20 @@ int ecParseRtfKeyword(RTF_Context *ctx)
         if (ecRtfGetChar(ctx, &ch) != ecOK)
             return ecEndOfFile;
     }
-    if (isdigit(ch))
+    if (SDL_isdigit(ch))
     {
         fParam = fTrue;         /* a digit after the control means we have a parameter */
-        for (pch = szParameter; isdigit(ch);)
+        for (pch = szParameter; SDL_isdigit(ch);)
         {
             *pch++ = (char) ch;
             if (ecRtfGetChar(ctx, &ch) != ecOK)
                 return ecEndOfFile;
         }
         *pch = '\0';
-        param = atoi(szParameter);
+        param = SDL_atoi(szParameter);
         if (fNeg)
             param = -param;
-        ctx->lParam = atol(szParameter);
+        ctx->lParam = SDL_strtol(szParameter, NULL, 10);
         if (fNeg)
             ctx->lParam = -ctx->lParam;
     }
@@ -694,7 +692,7 @@ int ecPrintChar(RTF_Context *ctx, int ch)
     if (ctx->datapos >= (ctx->datamax - 4))
     {
         ctx->datamax += 256;    /* 256 byte chunk size */
-        ctx->data = (char *) realloc(ctx->data, ctx->datamax);
+        ctx->data = (char *) SDL_realloc(ctx->data, ctx->datamax);
         if (!ctx->data)
         {
             return ecStackOverflow;
@@ -798,7 +796,7 @@ static void FreeLine(RTF_Line *line)
         RTF_Surface *surface = line->startSurface;
         line->startSurface = surface->next;
         RTF_FreeSurface(surface->surface);
-        free(surface);
+        SDL_free(surface);
     }
     while (line->start)
     {
@@ -807,18 +805,15 @@ static void FreeLine(RTF_Line *line)
         line->start = text->next;
         FreeTextBlock(text);
     }
-    free(line);
+    SDL_free(line);
 }
 
 static void FreeTextBlock(RTF_TextBlock *text)
 {
-    if (text->text)
-        free(text->text);
-    if (text->byteOffsets)
-        free(text->byteOffsets);
-    if (text->pixelOffsets)
-        free(text->pixelOffsets);
-    free(text);
+    SDL_free(text->text);
+    SDL_free(text->byteOffsets);
+    SDL_free(text->pixelOffsets);
+    SDL_free(text);
 }
 
 /* vi: set ts=4 sw=4 expandtab: */
