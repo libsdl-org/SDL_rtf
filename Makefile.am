@@ -17,14 +17,13 @@ libSDL2_rtf_la_SOURCES =		\
 	SDL_rtfreadr.h		\
 	SDL_rtf.c
 
-EXTRA_DIST =			\
+EXTRA_DIST = CHANGES.txt COPYING.txt README.txt \
 	version.rc		\
 	Makefile.os2		\
-	SDL_rtf.spec		\
-	SDL_rtf.spec.in		\
-	gcc-fat.sh		\
-	autogen.sh			\
-	$(srcdir)/*.txt
+	SDL2_rtf.spec		\
+	SDL2_rtf.spec.in	\
+	autogen.sh gcc-fat.sh
+
 
 if USE_VERSION_RC
 libSDL2_rtf_la_LDFLAGS = 	\

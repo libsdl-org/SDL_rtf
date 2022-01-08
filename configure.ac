@@ -46,7 +46,7 @@ dnl Detect the canonical build and host environments
 AC_CANONICAL_HOST
 
 dnl Setup for automake
-AM_INIT_AUTOMAKE(SDL_rtf, $VERSION)
+AM_INIT_AUTOMAKE(SDL2_rtf, $VERSION)
 
 dnl Check for tools
 AC_PROG_CC
@@ -150,6 +150,6 @@ AC_SUBST([WINDRES])
 # Finally create all the generated files
 AC_CONFIG_FILES([
 Makefile
-SDL_rtf.spec
+SDL2_rtf.spec
 ])
 AC_OUTPUT
