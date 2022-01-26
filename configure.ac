@@ -88,6 +88,36 @@ case "$host" in
 esac
 AM_CONDITIONAL(USE_VERSION_RC, test x$use_version_rc = xtrue)
 
+dnl See if GCC's -Wall is supported.
+CheckWarnAll()
+{
+    AC_MSG_CHECKING(for GCC -Wall option)
+    have_gcc_Wall=no
+
+    save_CFLAGS="$CFLAGS"
+    CFLAGS="$save_CFLAGS -Wall"
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([int x = 0;])], [have_gcc_Wall=yes])
+    AC_MSG_RESULT($have_gcc_Wall)
+    CFLAGS="$save_CFLAGS"
+
+    if test x$have_gcc_Wall = xyes; then
+        CFLAGS="$CFLAGS -Wall"
+
+dnl Haiku headers use multicharacter constants all over the place. Ignore these warnings when using -Wall.
+        AC_MSG_CHECKING(for necessary GCC -Wno-multichar option)
+        need_gcc_Wno_multichar=no
+        case "$host" in
+            *-*-haiku*)
+                need_gcc_Wno_multichar=yes
+                ;;
+        esac
+        AC_MSG_RESULT($need_gcc_Wno_multichar)
+        if test x$need_gcc_Wno_multichar = xyes; then
+            CFLAGS="$CFLAGS -Wno-multichar"
+        fi
+    fi
+}
+
 dnl See if GCC's -fvisibility=hidden is supported (gcc4 and later, usually).
 CheckVisibilityHidden()
 {
@@ -134,13 +164,16 @@ if test x$enable_SDL_ttf = xyes; then
         AC_CHECK_LIB([SDL2_ttf],[TTF_Init],[have_SDL_ttf=yes; SDLTTF_LIBS="-lSDL2_ttf"],[],[])
     ])
     if test x$have_SDL_ttf != xyes; then
-        AC_MSG_WARN([*** Can't find the SDL2_ttf library - not building showrtf
+        AC_MSG_WARN([*** Can't find the SDL2_ttf library - not building showrtf.
 The SDL2_ttf library can be found at:
 http://www.libsdl.org/projects/SDL_ttf/
 ])
     fi
 fi
 AM_CONDITIONAL(HAVE_SDL_TTF, test x$have_SDL_ttf = xyes)
+
+dnl check for GCC warning options
+CheckWarnAll
 
 dnl check for GCC visibility attributes
 CheckVisibilityHidden
