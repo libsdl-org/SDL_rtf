@@ -78,6 +78,64 @@ case "$host" in
 esac
 AM_CONDITIONAL(USE_VERSION_RC, test x$use_version_rc = xtrue)
 
+dnl See if GCC's -Wall is supported.
+CheckWarnAll()
+{
+    AC_MSG_CHECKING(for GCC -Wall option)
+    have_gcc_Wall=no
+
+    save_CFLAGS="$CFLAGS"
+    CFLAGS="$save_CFLAGS -Wall"
+    AC_TRY_COMPILE([int x = 0;],, [have_gcc_Wall=yes])
+    AC_MSG_RESULT($have_gcc_Wall)
+    CFLAGS="$save_CFLAGS"
+
+    if test x$have_gcc_Wall = xyes; then
+        CFLAGS="$CFLAGS -Wall"
+
+dnl Haiku headers use multicharacter constants all over the place. Ignore these warnings when using -Wall.
+        AC_MSG_CHECKING(for necessary GCC -Wno-multichar option)
+        need_gcc_Wno_multichar=no
+        case "$host" in
+            *-*-beos* | *-*-haiku*)
+                need_gcc_Wno_multichar=yes
+                ;;
+        esac
+        AC_MSG_RESULT($need_gcc_Wno_multichar)
+        if test x$need_gcc_Wno_multichar = xyes; then
+            CFLAGS="$CFLAGS -Wno-multichar"
+        fi
+    fi
+}
+
+dnl See if GCC's -fvisibility=hidden is supported (gcc4 and later, usually).
+CheckVisibilityHidden()
+{
+    AC_MSG_CHECKING(for GCC -fvisibility=hidden option)
+    have_gcc_fvisibility=no
+    case "$host" in
+    *-*-cygwin* | *-*-mingw* | *-*-os2*)
+        AC_MSG_RESULT([ignored for $host_os])
+        return
+        ;;
+    esac
+
+    visibility_CFLAGS="-fvisibility=hidden"
+    save_CFLAGS="$CFLAGS"
+    CFLAGS="$save_CFLAGS $visibility_CFLAGS -Werror"
+    AC_TRY_COMPILE([
+    #if !defined(__GNUC__) || __GNUC__ < 4
+    #error SDL only uses visibility attributes in GCC 4 or newer
+    #endif
+    ],, [have_gcc_fvisibility=yes])
+    AC_MSG_RESULT($have_gcc_fvisibility)
+    CFLAGS="$save_CFLAGS"
+
+    if test x$have_gcc_fvisibility = xyes; then
+        CFLAGS="$CFLAGS $visibility_CFLAGS"
+    fi
+}
+
 dnl Check for SDL
 SDL_VERSION=1.2.4
 AM_PATH_SDL($SDL_VERSION,
@@ -96,13 +154,19 @@ if test x$enable_SDL_ttf = xyes; then
         AC_CHECK_LIB([SDL_ttf],[TTF_Init],[have_SDL_ttf=yes; SDLTTF_LIBS="-lSDL_ttf"],[],[])
     ])
     if test x$have_SDL_ttf != xyes; then
-        AC_MSG_WARN([*** Can't find the SDL_ttf library - not building showrtf
+        AC_MSG_WARN([*** Can't find the SDL_ttf library - not building showrtf.
 The SDL_ttf library can be found at:
 http://www.libsdl.org/projects/SDL_ttf/
 ])
     fi
 fi
 AM_CONDITIONAL(HAVE_SDL_TTF, test x$have_SDL_ttf = xyes)
+
+dnl check for GCC warning options
+CheckWarnAll
+
+dnl check for GCC visibility attributes
+CheckVisibilityHidden
 
 AC_SUBST([WINDRES])
 
