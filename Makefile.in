@@ -318,6 +318,7 @@ PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
 PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
+RC = @RC@
 SDL2_CONFIG = @SDL2_CONFIG@
 SDLTTF_CFLAGS = @SDLTTF_CFLAGS@
 SDLTTF_LIBS = @SDLTTF_LIBS@
@@ -328,7 +329,6 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
-WINDRES = @WINDRES@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -407,15 +407,10 @@ EXTRA_DIST = CHANGES.txt COPYING.txt README.txt \
 	SDL2_rtf.spec.in	\
 	autogen.sh gcc-fat.sh
 
-@USE_VERSION_RC_FALSE@libSDL2_rtf_la_LDFLAGS = \
-@USE_VERSION_RC_FALSE@	-no-undefined		\
-@USE_VERSION_RC_FALSE@	-release $(LT_RELEASE)	\
-@USE_VERSION_RC_FALSE@	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_EXTRA)
-
-@USE_VERSION_RC_TRUE@libSDL2_rtf_la_LDFLAGS = \
-@USE_VERSION_RC_TRUE@	-no-undefined		\
-@USE_VERSION_RC_TRUE@	-release $(LT_RELEASE)	\
-@USE_VERSION_RC_TRUE@	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) -Wl,version.o
+libSDL2_rtf_la_LDFLAGS = \
+	-no-undefined		\
+	-release $(LT_RELEASE)	\
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_EXTRA)
 
 @USE_VERSION_RC_TRUE@libSDL2_rtf_la_DEPENDENCIES = version.o
 @HAVE_SDL_TTF_FALSE@EXAMPLES = 
@@ -426,7 +421,7 @@ showrtf_CFLAGS = @SDLTTF_CFLAGS@
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .lo .o .obj .rc
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -972,8 +967,8 @@ uninstall-am: uninstall-libLTLIBRARIES \
 .PRECIOUS: Makefile
 
 
-%.o : %.rc
-	$(WINDRES) $< $@
+.rc.o:
+	$(RC) $< $@
 
 # Rule to build tar-gzipped distribution package
 $(PACKAGE)-$(VERSION).tar.gz: distcheck

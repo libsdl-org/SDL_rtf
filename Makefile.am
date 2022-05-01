@@ -25,21 +25,16 @@ EXTRA_DIST = CHANGES.txt COPYING.txt README.txt \
 	autogen.sh gcc-fat.sh
 
 
-if USE_VERSION_RC
-libSDL2_rtf_la_LDFLAGS = 	\
-	-no-undefined		\
-	-release $(LT_RELEASE)	\
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) -Wl,version.o
-libSDL2_rtf_la_DEPENDENCIES = version.o
-else
 libSDL2_rtf_la_LDFLAGS = 	\
 	-no-undefined		\
 	-release $(LT_RELEASE)	\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_EXTRA)
+if USE_VERSION_RC
+libSDL2_rtf_la_DEPENDENCIES = version.o
 endif
 
-%.o : %.rc
-	$(WINDRES) $< $@
+.rc.o:
+	$(RC) $< $@
 
 if HAVE_SDL_TTF
 EXAMPLES = showrtf

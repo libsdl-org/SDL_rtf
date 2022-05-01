@@ -52,12 +52,7 @@ dnl Check for tools
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-if test -z "$host_alias"; then
-    hostaliaswindres=
-else
-    hostaliaswindres="$host_alias-windres"
-fi
-AC_CHECK_PROGS(WINDRES, [windres $hostaliaswindres $host_os-windres])
+LT_PROG_RC
 
 case "$host" in
     *-*-beos*)
@@ -73,9 +68,8 @@ case "$host" in
                 ac_default_prefix=$BUILD_PREFIX
             fi
         fi
-        if test x$WINDRES != x; then
-            use_version_rc=true
-        fi
+        use_version_rc=true
+        LT_EXTRA="-Wl,version.o"
         ;;
     *-*-os2*)
         # disable static builds on os/2
@@ -177,8 +171,6 @@ CheckWarnAll
 
 dnl check for GCC visibility attributes
 CheckVisibilityHidden
-
-AC_SUBST([WINDRES])
 
 # Finally create all the generated files
 AC_CONFIG_FILES([
