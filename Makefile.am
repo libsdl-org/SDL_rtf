@@ -25,21 +25,16 @@ EXTRA_DIST =			\
 	gcc-fat.sh		\
 	autogen.sh
 
+libSDL_rtf_la_LDFLAGS = 	\
+	-no-undefined		\
+	-release $(LT_RELEASE)	\
+	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_EXTRA)
 if USE_VERSION_RC
-libSDL_rtf_la_LDFLAGS = 	\
-	-no-undefined		\
-	-release $(LT_RELEASE)	\
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) -Wl,version.o
 libSDL_rtf_la_DEPENDENCIES = version.o
-else
-libSDL_rtf_la_LDFLAGS = 	\
-	-no-undefined		\
-	-release $(LT_RELEASE)	\
-	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 endif
 
-%.o : %.rc
-	$(WINDRES) $< $@
+.rc.o:
+	$(RC) $< $@
 
 if HAVE_SDL_TTF
 EXAMPLES = showrtf
