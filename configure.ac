@@ -1,7 +1,4 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT
-AC_CONFIG_MACRO_DIR([acinclude])
-AC_CONFIG_SRCDIR([SDL_rtf.c])
 
 dnl Set various version strings - taken gratefully from the GTk sources
 
@@ -13,27 +10,47 @@ dnl Set various version strings - taken gratefully from the GTk sources
 # if backwards compatibility has been broken,
 # set BINARY_AGE and INTERFACE_AGE to 0.
 
-MAJOR_VERSION=2
-MINOR_VERSION=0
-MICRO_VERSION=0
-INTERFACE_AGE=0
-BINARY_AGE=0
-VERSION=$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
+# See release_checklist.md
+m4_define([MAJOR_VERSION_MACRO], [2])
+m4_define([MINOR_VERSION_MACRO], [0])
+m4_define([MICRO_VERSION_MACRO], [0])
 
-AC_SUBST(MAJOR_VERSION)
-AC_SUBST(MINOR_VERSION)
-AC_SUBST(MICRO_VERSION)
-AC_SUBST(INTERFACE_AGE)
-AC_SUBST(BINARY_AGE)
-AC_SUBST(VERSION)
+AC_INIT([SDL2_rtf],
+        MAJOR_VERSION_MACRO.MINOR_VERSION_MACRO.MICRO_VERSION_MACRO,
+        [https://github.com/libsdl-org/SDL_rtf/issues],
+        [SDL2_rtf])
+AC_CONFIG_MACRO_DIR([acinclude])
+AC_CONFIG_SRCDIR([SDL_rtf.c])
+
+AC_SUBST([MAJOR_VERSION], MAJOR_VERSION_MACRO)
+AC_SUBST([MINOR_VERSION], MINOR_VERSION_MACRO)
+AC_SUBST([MICRO_VERSION], MICRO_VERSION_MACRO)
+
+BINARY_AGE=`expr $MINOR_VERSION \* 100 + $MICRO_VERSION`
+AS_CASE(["$MINOR_VERSION"],
+  [*@<:@02468@:>@],
+    dnl Stable branch, 2.6.1 -> libSDL2-2.0.so.0.600.1
+    [INTERFACE_AGE="$MICRO_VERSION"],
+  [*],
+    dnl Development branch, 2.5.1 -> libSDL2-2.0.so.0.501.0
+    [INTERFACE_AGE=0])
 
 dnl libtool versioning
 LT_INIT([win32-dll])
 
-LT_RELEASE=$MAJOR_VERSION.$MINOR_VERSION
-LT_CURRENT=`expr $MICRO_VERSION - $INTERFACE_AGE`
-LT_REVISION=$INTERFACE_AGE
+# For historical reasons, the library name redundantly includes the major
+# version twice: libSDL2_rtf-2.0.so.0.
+# TODO: in SDL 3, stop using -release, which will simplify it to libSDL3.so.0
+LT_RELEASE=2.0
+# Increment this if there is an incompatible change - but if that happens,
+# we should rename the library from SDL2 to SDL3, at which point this would
+# reset to 0 anyway.
+LT_MAJOR=0
 LT_AGE=`expr $BINARY_AGE - $INTERFACE_AGE`
+LT_CURRENT=`expr $LT_MAJOR + $LT_AGE`
+LT_REVISION=$INTERFACE_AGE
+m4_pattern_allow([LT_MAJOR])
+
 LT_EXTRA="" dnl for OS2 dll name
 
 AC_SUBST(LT_RELEASE)
@@ -46,7 +63,7 @@ dnl Detect the canonical build and host environments
 AC_CANONICAL_HOST
 
 dnl Setup for automake
-AM_INIT_AUTOMAKE(SDL2_rtf, $VERSION)
+AM_INIT_AUTOMAKE([foreign tar-ustar])
 
 dnl Check for tools
 AC_PROG_CC
@@ -142,6 +159,7 @@ CheckVisibilityHidden()
 
 dnl Check for SDL
 SDL_VERSION=2.0.0
+AC_SUBST([SDL_VERSION])
 AM_PATH_SDL2($SDL_VERSION,
             :,
 	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
@@ -172,9 +190,23 @@ CheckWarnAll
 dnl check for GCC visibility attributes
 CheckVisibilityHidden
 
+PC_REQUIRES=SDL2_ttf
+PC_LIBS=
+AC_SUBST([PC_REQUIRES])
+AC_SUBST([PC_LIBS])
+
+dnl Calculate the location of the prefix, relative to the cmake folder
+eval pkg_prefix=$prefix
+eval pkg_cmakedir=$libdir/cmake/SDL2_ttf
+cmake_prefix_relpath="$(echo -n "$pkg_cmakedir" | sed -E "s#^$pkg_prefix##" | sed -E "s#[A-Za-z0-9_ .-]+#..#g")"
+AC_SUBST([cmake_prefix_relpath])
+
 # Finally create all the generated files
 AC_CONFIG_FILES([
 Makefile
+sdl2_rtf-config.cmake
+sdl2_rtf-config-version.cmake
 SDL2_rtf.spec
+SDL2_rtf.pc
 ])
 AC_OUTPUT

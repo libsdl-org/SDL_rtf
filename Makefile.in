@@ -16,6 +16,7 @@
 
 
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -108,7 +109,8 @@ DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES = SDL2_rtf.spec
+CONFIG_CLEAN_FILES = sdl2_rtf-config.cmake \
+	sdl2_rtf-config-version.cmake SDL2_rtf.spec SDL2_rtf.pc
 CONFIG_CLEAN_VPATH_FILES =
 @HAVE_SDL_TTF_TRUE@am__EXEEXT_1 = showrtf$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
@@ -139,7 +141,7 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(libdir)" \
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 	"$(DESTDIR)$(libSDL2_rtfincludedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libSDL2_rtf_la_LIBADD =
@@ -204,6 +206,7 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+DATA = $(pkgconfig_DATA)
 HEADERS = $(libSDL2_rtfinclude_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
@@ -223,9 +226,11 @@ am__define_uniq_tagged_files = \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
 AM_RECURSIVE_TARGETS = cscope
-am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/SDL2_rtf.spec.in \
-	compile config.guess config.sub depcomp install-sh ltmain.sh \
-	missing
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/SDL2_rtf.pc.in \
+	$(srcdir)/SDL2_rtf.spec.in \
+	$(srcdir)/sdl2_rtf-config-version.cmake.in \
+	$(srcdir)/sdl2_rtf-config.cmake.in compile config.guess \
+	config.sub depcomp install-sh ltmain.sh missing
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -254,11 +259,9 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BINARY_AGE = @BINARY_AGE@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CSCOPE = @CSCOPE@
 CTAGS = @CTAGS@
@@ -281,7 +284,6 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INTERFACE_AGE = @INTERFACE_AGE@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
@@ -295,8 +297,10 @@ LT_CURRENT = @LT_CURRENT@
 LT_EXTRA = @LT_EXTRA@
 LT_RELEASE = @LT_RELEASE@
 LT_REVISION = @LT_REVISION@
+LT_SYS_LIBRARY_PATH = @LT_SYS_LIBRARY_PATH@
 MAJOR_VERSION = @MAJOR_VERSION@
 MAKEINFO = @MAKEINFO@
+MANIFEST_TOOL = @MANIFEST_TOOL@
 MICRO_VERSION = @MICRO_VERSION@
 MINOR_VERSION = @MINOR_VERSION@
 MKDIR_P = @MKDIR_P@
@@ -314,6 +318,8 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PC_LIBS = @PC_LIBS@
+PC_REQUIRES = @PC_REQUIRES@
 PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
 PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
@@ -324,6 +330,7 @@ SDLTTF_CFLAGS = @SDLTTF_CFLAGS@
 SDLTTF_LIBS = @SDLTTF_LIBS@
 SDL_CFLAGS = @SDL_CFLAGS@
 SDL_LIBS = @SDL_LIBS@
+SDL_VERSION = @SDL_VERSION@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
@@ -333,6 +340,7 @@ abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
+ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -347,6 +355,7 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 builddir = @builddir@
+cmake_prefix_relpath = @cmake_prefix_relpath@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
@@ -365,7 +374,6 @@ libdir = @libdir@
 libexecdir = @libexecdir@
 localedir = @localedir@
 localstatedir = @localstatedir@
-lt_ECHO = @lt_ECHO@
 mandir = @mandir@
 mkdir_p = @mkdir_p@
 oldincludedir = @oldincludedir@
@@ -413,6 +421,8 @@ libSDL2_rtf_la_LDFLAGS = \
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) $(LT_EXTRA)
 
 @USE_VERSION_RC_TRUE@libSDL2_rtf_la_DEPENDENCIES = version.o
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = SDL2_rtf.pc
 @HAVE_SDL_TTF_FALSE@EXAMPLES = 
 @HAVE_SDL_TTF_TRUE@EXAMPLES = showrtf
 showrtf_SOURCES = showrtf.c
@@ -455,7 +465,13 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+sdl2_rtf-config.cmake: $(top_builddir)/config.status $(srcdir)/sdl2_rtf-config.cmake.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+sdl2_rtf-config-version.cmake: $(top_builddir)/config.status $(srcdir)/sdl2_rtf-config-version.cmake.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 SDL2_rtf.spec: $(top_builddir)/config.status $(srcdir)/SDL2_rtf.spec.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+SDL2_rtf.pc: $(top_builddir)/config.status $(srcdir)/SDL2_rtf.pc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstPROGRAMS:
@@ -570,6 +586,27 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
+install-pkgconfigDATA: $(pkgconfig_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(pkgconfig_DATA)'; test -n "$(pkgconfigdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(pkgconfigdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(pkgconfigdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(pkgconfigdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(pkgconfigdir)" || exit $$?; \
+	done
+
+uninstall-pkgconfigDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(pkgconfig_DATA)'; test -n "$(pkgconfigdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(pkgconfigdir)'; $(am__uninstall_files_from_dir)
 install-libSDL2_rtfincludeHEADERS: $(libSDL2_rtfinclude_HEADERS)
 	@$(NORMAL_INSTALL)
 	@list='$(libSDL2_rtfinclude_HEADERS)'; test -n "$(libSDL2_rtfincludedir)" || list=; \
@@ -824,9 +861,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(LTLIBRARIES) $(HEADERS)
+all-am: Makefile $(PROGRAMS) $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(libSDL2_rtfincludedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(libSDL2_rtfincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -887,7 +924,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-libSDL2_rtfincludeHEADERS
+install-data-am: install-data-local install-libSDL2_rtfincludeHEADERS \
+	install-pkgconfigDATA
 
 install-dvi: install-dvi-am
 
@@ -940,9 +978,10 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-libLTLIBRARIES \
-	uninstall-libSDL2_rtfincludeHEADERS
-
-.MAKE: install-am install-strip
+	uninstall-libSDL2_rtfincludeHEADERS uninstall-pkgconfigDATA
+	@$(NORMAL_INSTALL)
+	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
+.MAKE: install-am install-strip uninstall-am
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles am--refresh check \
 	check-am clean clean-cscope clean-generic clean-libLTLIBRARIES \
@@ -952,17 +991,18 @@ uninstall-am: uninstall-libLTLIBRARIES \
 	distclean distclean-compile distclean-generic \
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-libSDL2_rtfincludeHEADERS \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-libLTLIBRARIES \
-	uninstall-libSDL2_rtfincludeHEADERS
+	install install-am install-data install-data-am \
+	install-data-local install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-libLTLIBRARIES \
+	install-libSDL2_rtfincludeHEADERS install-man install-pdf \
+	install-pdf-am install-pkgconfigDATA install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-hook uninstall-libLTLIBRARIES \
+	uninstall-libSDL2_rtfincludeHEADERS uninstall-pkgconfigDATA
 
 .PRECIOUS: Makefile
 
@@ -976,6 +1016,16 @@ $(PACKAGE)-$(VERSION).tar.gz: distcheck
 # Rule to build RPM distribution package
 rpm: $(PACKAGE)-$(VERSION).tar.gz
 	rpmbuild -ta $(PACKAGE)-$(VERSION).tar.gz
+
+install-data-local:
+	$(MKDIR_P) $(DESTDIR)$(libdir)/cmake/SDL2_rtf
+	$(INSTALL) -m 644 sdl2_rtf-config.cmake $(DESTDIR)$(libdir)/cmake/SDL2_rtf
+	$(INSTALL) -m 644 sdl2_rtf-config-version.cmake $(DESTDIR)$(libdir)/cmake/SDL2_rtf
+
+uninstall-hook:
+	rm $(DESTDIR)$(libdir)/cmake/SDL2_rtf/sdl2_rtf-config.cmake
+	rm $(DESTDIR)$(libdir)/cmake/SDL2_rtf/sdl2_rtf-config-version.cmake
+	rm -r $(DESTDIR)$(libdir)/cmake/SDL2_rtf
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
