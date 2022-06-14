@@ -33,6 +33,9 @@ if USE_VERSION_RC
 libSDL2_rtf_la_DEPENDENCIES = version.o
 endif
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = SDL2_rtf.pc
+
 .rc.o:
 	$(RC) $< $@
 
@@ -54,3 +57,12 @@ $(PACKAGE)-$(VERSION).tar.gz: distcheck
 rpm: $(PACKAGE)-$(VERSION).tar.gz
 	rpmbuild -ta $(PACKAGE)-$(VERSION).tar.gz
 
+install-data-local:
+	$(MKDIR_P) $(DESTDIR)$(libdir)/cmake/SDL2_rtf
+	$(INSTALL) -m 644 sdl2_rtf-config.cmake $(DESTDIR)$(libdir)/cmake/SDL2_rtf
+	$(INSTALL) -m 644 sdl2_rtf-config-version.cmake $(DESTDIR)$(libdir)/cmake/SDL2_rtf
+
+uninstall-hook:
+	rm $(DESTDIR)$(libdir)/cmake/SDL2_rtf/sdl2_rtf-config.cmake
+	rm $(DESTDIR)$(libdir)/cmake/SDL2_rtf/sdl2_rtf-config-version.cmake
+	rm -r $(DESTDIR)$(libdir)/cmake/SDL2_rtf
