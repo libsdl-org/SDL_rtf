@@ -132,8 +132,8 @@ typedef struct _RTF_FontEngine
 /**
  * Create an RTF display context, with the given font engine.
  *
- * Once a context is created, it can be used to load and display
- * text in Microsoft RTF format.
+ * Once a context is created, it can be used to load and display text in
+ * Microsoft RTF format.
  *
  * \param renderer an SDL renderer to use for drawing.
  * \param fontEngine the font engine to use for rendering text.
@@ -164,8 +164,8 @@ extern DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
  *
  * This can be called multiple times to change the text displayed.
  *
- * If `freesrc` is non-zero, this function will close/free `src`, whether
- * this function succeeded or not.
+ * If `freesrc` is non-zero, this function will close/free `src`, whether this
+ * function succeeded or not.
  *
  * On failure, call RTF_GetError() to get a human-readable text message
  * corresponding to the error.
@@ -182,9 +182,9 @@ extern DECLSPEC int SDLCALL RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int fr
 /**
  * Get the title of an RTF document.
  *
- * The returned string is part of the RTF_Context, and should not be
- * modified or freed by the application. The pointer remains valid until
- * the RTF_Context is freed.
+ * The returned string is part of the RTF_Context, and should not be modified
+ * or freed by the application. The pointer remains valid until the
+ * RTF_Context is freed.
  *
  * \param ctx the RTF context to query.
  * \returns the document title in UTF-8 encoding.
@@ -196,9 +196,9 @@ extern DECLSPEC const char * SDLCALL RTF_GetTitle(RTF_Context *ctx);
 /**
  * Get the subject of an RTF document.
  *
- * The returned string is part of the RTF_Context, and should not be
- * modified or freed by the application. The pointer remains valid until
- * the RTF_Context is freed.
+ * The returned string is part of the RTF_Context, and should not be modified
+ * or freed by the application. The pointer remains valid until the
+ * RTF_Context is freed.
  *
  * \param ctx the RTF context to query.
  * \returns the document subject in UTF-8 encoding.
@@ -210,9 +210,9 @@ extern DECLSPEC const char * SDLCALL RTF_GetSubject(RTF_Context *ctx);
 /**
  * Get the author of an RTF document.
  *
- * The returned string is part of the RTF_Context, and should not be
- * modified or freed by the application. The pointer remains valid until
- * the RTF_Context is freed.
+ * The returned string is part of the RTF_Context, and should not be modified
+ * or freed by the application. The pointer remains valid until the
+ * RTF_Context is freed.
  *
  * \param ctx the RTF context to query.
  * \returns the document author in UTF-8 encoding.
@@ -224,8 +224,8 @@ extern DECLSPEC const char * SDLCALL RTF_GetAuthor(RTF_Context *ctx);
 /**
  * Get the height of an RTF render area given a certain width.
  *
- * The text is automatically reflowed to this new width, and should match
- * the width of the clipping rectangle used for rendering later.
+ * The text is automatically reflowed to this new width, and should match the
+ * width of the clipping rectangle used for rendering later.
  *
  * \param ctx the RTF context to query.
  * \param width the width, in pixels, to use for text flow.
@@ -255,8 +255,8 @@ extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yO
 /**
  * Free an RTF display context.
  *
- * Call this when done rendering RTF content, to free resources
- * used by this context.
+ * Call this when done rendering RTF content, to free resources used by this
+ * context.
  *
  * The context is not valid after this call.
  *
