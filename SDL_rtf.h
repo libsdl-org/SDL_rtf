@@ -258,7 +258,8 @@ extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yO
  * Call this when done rendering RTF content, to free resources used by this
  * context.
  *
- * The context is not valid after this call.
+ * The context is not valid after this call. This does not destroy the
+ * associated SDL_Renderer, which can continue to draw and present.
  *
  * \param ctx the RTF context to free.
  *
