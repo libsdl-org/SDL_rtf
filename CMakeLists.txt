@@ -227,7 +227,7 @@ if(SDL2RTF_INSTALL)
         )
     endif()
 
-    install(FILES "COPYING.txt"
+    install(FILES "LICENSE.txt"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}"
         COMPONENT library
     )

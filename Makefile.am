@@ -17,7 +17,7 @@ libSDL2_rtf_la_SOURCES =		\
 	SDL_rtfreadr.h		\
 	SDL_rtf.c
 
-EXTRA_DIST = CHANGES.txt COPYING.txt README.txt \
+EXTRA_DIST = CHANGES.txt LICENSE.txt README.txt \
 	version.rc		\
 	Makefile.os2		\
 	SDL2_rtf.spec		\

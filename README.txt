@@ -12,7 +12,7 @@ The SDL_ttf library can be found at: http://www.libsdl.org/projects/SDL_rtf/
 To make the library, type './configure' then 'make' to build the SDL rtf
 library and the showrtf example application.
 
-This library is under the zlib license, see the file "COPYING" for details.
+This library is under the zlib license, see the file "LICENSE.txt" for details.
 
 Enjoy!
 	-Sam Lantinga <slouken@libsdl.org>		(8/16/2003)
