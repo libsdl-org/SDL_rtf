@@ -1,0 +1,16 @@
+projectfullname = SDL_rtf
+projectshortname = SDL_rtf
+incsubdir =
+wikisubdir = SDL_rtf
+apiprefixregex = RTF_
+mainincludefname = SDL_rtf.h
+versionfname = SDL_rtf.h
+versionmajorregex = \A\#define\s+SDL_RTF_MAJOR_VERSION\s+(\d+)\Z
+versionminorregex = \A\#define\s+SDL_RTF_MINOR_VERSION\s+(\d+)\Z
+versionpatchregex = \A\#define\s+SDL_RTF_PATCHLEVEL\s+(\d+)\Z
+selectheaderregex = \ASDL_rtf\.h\Z
+projecturl = https://libsdl.org/projects/SDL_rtf
+wikiurl = https://wiki.libsdl.org/SDL_rtf
+bugreporturl = https://github.com/libsdl-org/sdlwiki/issues/new
+warn_about_missing = 1
+wikipreamble = (This function is part of SDL_rtf, a separate library from SDL.)

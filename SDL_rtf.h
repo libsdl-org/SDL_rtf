@@ -54,9 +54,18 @@ extern "C" {
 #define RTF_PATCHLEVEL          SDL_RTF_PATCHLEVEL
 #define RTF_VERSION(X)          SDL_RTF_VERSION(X)
 
-/* This function gets the version of the dynamically linked SDL_rtf library.
-   it should NOT be used to fill a version structure, instead you should
-   use the SDL_RTF_VERSION() macro.
+/**
+ * Query the version of SDL_rtf that the program is linked against.
+ *
+ * This function gets the version of the dynamically linked SDL_rtf library.
+ * This is separate from the SDL_RTF_VERSION() macro, which tells you what
+ * version of the SDL_rtf headers you compiled against.
+ *
+ * This returns static internal data; do not free or modify it!
+ *
+ * \returns a pointer to the version information.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
  */
 extern DECLSPEC const SDL_version * SDLCALL RTF_Linked_Version(void);
 
@@ -120,42 +129,141 @@ typedef struct _RTF_FontEngine
 } RTF_FontEngine;
 
 
-/* Create an RTF display context, with the given font engine.
+/**
+ * Create an RTF display context, with the given font engine.
+ *
  * Once a context is created, it can be used to load and display
  * text in Microsoft RTF format.
+ *
+ * \param renderer an SDL renderer to use for drawing.
+ * \param fontEngine the font engine to use for rendering text.
+ * \returns a new RTF display context, or NULL on error.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
  */
 extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngine);
 
-/* Set the text of an RTF context.
- * This function returns 0 if it succeeds or -1 if it fails.
- * Use RTF_GetError() to get a text message corresponding to the error.
+/**
+ * Set the text of an RTF context, with data loaded from a filename.
+ *
  * This can be called multiple times to change the text displayed.
+ *
+ * On failure, call RTF_GetError() to get a human-readable text message
+ * corresponding to the error.
+ *
+ * \param ctx the RTF context to update.
+ * \param file the file path to load RTF data from.
+ * \returns 0 on success, -1 on failure.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
  */
 extern DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
+
+/**
+ * Set the text of an RTF context, with data loaded from an SDL_RWops.
+ *
+ * This can be called multiple times to change the text displayed.
+ *
+ * If `freesrc` is non-zero, this function will close/free `src`, whether
+ * this function succeeded or not.
+ *
+ * On failure, call RTF_GetError() to get a human-readable text message
+ * corresponding to the error.
+ *
+ * \param ctx the RTF context to update.
+ * \param src the SDL_RWops to load RTF data from.
+ * \param freesrc non-zero to close/free `src`, zero to leave open.
+ * \returns 0 on success, -1 on failure.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
+ */
 extern DECLSPEC int SDLCALL RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int freesrc);
 
-/* Get the title of an RTF document */
+/**
+ * Get the title of an RTF document.
+ *
+ * The returned string is part of the RTF_Context, and should not be
+ * modified or freed by the application. The pointer remains valid until
+ * the RTF_Context is freed.
+ *
+ * \param ctx the RTF context to query.
+ * \returns the document title in UTF-8 encoding.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
+ */
 extern DECLSPEC const char * SDLCALL RTF_GetTitle(RTF_Context *ctx);
 
-/* Get the subject of an RTF document */
+/**
+ * Get the subject of an RTF document.
+ *
+ * The returned string is part of the RTF_Context, and should not be
+ * modified or freed by the application. The pointer remains valid until
+ * the RTF_Context is freed.
+ *
+ * \param ctx the RTF context to query.
+ * \returns the document subject in UTF-8 encoding.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
+ */
 extern DECLSPEC const char * SDLCALL RTF_GetSubject(RTF_Context *ctx);
 
-/* Get the author of an RTF document */
+/**
+ * Get the author of an RTF document.
+ *
+ * The returned string is part of the RTF_Context, and should not be
+ * modified or freed by the application. The pointer remains valid until
+ * the RTF_Context is freed.
+ *
+ * \param ctx the RTF context to query.
+ * \returns the document author in UTF-8 encoding.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
+ */
 extern DECLSPEC const char * SDLCALL RTF_GetAuthor(RTF_Context *ctx);
 
-/* Get the height of an RTF render area given a certain width.
+/**
+ * Get the height of an RTF render area given a certain width.
+ *
  * The text is automatically reflowed to this new width, and should match
  * the width of the clipping rectangle used for rendering later.
+ *
+ * \param ctx the RTF context to query.
+ * \param width the width, in pixels, to use for text flow.
+ * \returns the height, in pixels, of an RTF render area.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
  */
 extern DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
 
-/* Render the RTF document to a rectangle of a surface.
-   The text is reflowed to match the width of the rectangle.
-   The rendering is offset up (and clipped) by yOffset pixels.
-*/
+/**
+ * Render the RTF document to a rectangle in an SDL_Renderer.
+ *
+ * Rendering is done through the SDL_Renderer specified in RTF_CreateContext.
+ *
+ * The text is reflowed to match the width of the rectangle.
+ *
+ * The rendering is offset up (and clipped) by yOffset pixels.
+ *
+ * \param ctx the RTF context render to.
+ * \param rect the area to render text into.
+ * \param yOffset offset up (and clip) by this many pixels.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
+ */
 extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset);
 
-/* Free an RTF display context */
+/**
+ * Free an RTF display context.
+ *
+ * Call this when done rendering RTF content, to free resources
+ * used by this context.
+ *
+ * The context is not valid after this call.
+ *
+ * \param ctx the RTF context to free.
+ *
+ * \since This function is available since SDL_rtf 2.0.0.
+ */
 extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
 
 /* We'll use SDL for reporting errors */
