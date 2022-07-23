@@ -25,6 +25,12 @@ project(SDL2_rtf
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
 
+if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+    set(SDL2RTF_ROOTPROJECT ON)
+else()
+    set(SDL2RTF_ROOTPROJECT OFF)
+endif()
+
 # Set defaults preventing destination file conflicts
 set(SDL2RTF_DEBUG_POSTFIX "d"
     CACHE STRING "Name suffix for debug builds")
@@ -48,8 +54,8 @@ option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
 # Save BUILD_SHARED_LIBS variable
 set(SDL2RTF_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
 
-option(SDL2RTF_SAMPLES "Build the SDL2_rtf sample program(s)" ON)
-option(SDL2RTF_INSTALL "Enable SDL2_rtf install target" ON)
+option(SDL2RTF_SAMPLES "Build the SDL2_rtf sample program(s)" ${SDL2RTF_ROOTPROJECT})
+option(SDL2RTF_INSTALL "Enable SDL2_rtf install target" ${SDL2RTF_ROOTPROJECT})
 
 if(SDL2RTF_BUILD_SHARED_LIBS)
     set(sdl2_rtf_export_name SDL2_rtf)
