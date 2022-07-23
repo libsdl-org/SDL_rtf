@@ -70,7 +70,9 @@ else()
 endif()
 
 sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})
-find_package(SDL2_ttf REQUIRED)
+if(NOT TARGET ${sdl2ttf_target_name})
+    find_package(SDL2_ttf REQUIRED)
+endif()
 
 add_library(SDL2_rtf
     rtfactn.c
