@@ -11,7 +11,6 @@ ref_major=$(sed -ne 's/^#define SDL_RTF_MAJOR_VERSION  *//p' SDL_rtf.h)
 ref_minor=$(sed -ne 's/^#define SDL_RTF_MINOR_VERSION  *//p' SDL_rtf.h)
 ref_micro=$(sed -ne 's/^#define SDL_RTF_PATCHLEVEL  *//p' SDL_rtf.h)
 ref_version="${ref_major}.${ref_minor}.${ref_micro}"
-ref_sdl_req=$(sed -ne 's/^SDL_VERSION=//p' configure.ac)
 
 tests=0
 failed=0
@@ -31,11 +30,23 @@ major=$(sed -Ene 's/^m4_define\(\[MAJOR_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' c
 minor=$(sed -Ene 's/^m4_define\(\[MINOR_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
 micro=$(sed -Ene 's/^m4_define\(\[MICRO_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
 version="${major}.${minor}.${micro}"
+ref_sdl_req=$(sed -ne 's/^SDL_VERSION=//p' configure.ac)
 
 if [ "$ref_version" = "$version" ]; then
     ok "configure.ac $version"
 else
-    not_ok "configure.ac $version disagrees with SDL_ttf.h $ref_version"
+    not_ok "configure.ac $version disagrees with SDL_rtf.h $ref_version"
+fi
+
+major=$(sed -ne 's/^MAJOR_VERSION=//p' configure)
+minor=$(sed -ne 's/^MINOR_VERSION=//p' configure)
+micro=$(sed -ne 's/^MICRO_VERSION=//p' configure)
+version="${major}.${minor}.${micro}"
+
+if [ "$ref_version" = "$version" ]; then
+    ok "configure $version"
+else
+    not_ok "configure $version disagrees with SDL_rtf.h $ref_version"
 fi
 
 major=$(sed -ne 's/^set(MAJOR_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
@@ -47,7 +58,7 @@ version="${major}.${minor}.${micro}"
 if [ "$ref_version" = "$version" ]; then
     ok "CMakeLists.txt $version"
 else
-    not_ok "CMakeLists.txt $version disagrees with SDL_ttf.h $ref_version"
+    not_ok "CMakeLists.txt $version disagrees with SDL_rtf.h $ref_version"
 fi
 
 if [ "$ref_sdl_req" = "$sdl_req" ]; then
@@ -64,7 +75,7 @@ version="${major}.${minor}.${micro}"
 if [ "$ref_version" = "$version" ]; then
     ok "Makefile.os2 $version"
 else
-    not_ok "Makefile.os2 $version disagrees with SDL_ttf.h $ref_version"
+    not_ok "Makefile.os2 $version disagrees with SDL_rtf.h $ref_version"
 fi
 
 for rcfile in version.rc; do
@@ -74,7 +85,7 @@ for rcfile in version.rc; do
     if [ "$ref_tuple" = "$tuple" ]; then
         ok "$rcfile FILEVERSION $tuple"
     else
-        not_ok "$rcfile FILEVERSION $tuple disagrees with SDL_ttf.h $ref_tuple"
+        not_ok "$rcfile FILEVERSION $tuple disagrees with SDL_rtf.h $ref_tuple"
     fi
 
     tuple=$(sed -ne 's/^ *PRODUCTVERSION *//p' "$rcfile" | tr -d '\r')
@@ -82,7 +93,7 @@ for rcfile in version.rc; do
     if [ "$ref_tuple" = "$tuple" ]; then
         ok "$rcfile PRODUCTVERSION $tuple"
     else
-        not_ok "$rcfile PRODUCTVERSION $tuple disagrees with SDL_ttf.h $ref_tuple"
+        not_ok "$rcfile PRODUCTVERSION $tuple disagrees with SDL_rtf.h $ref_tuple"
     fi
 
     tuple=$(sed -Ene 's/^ *VALUE "FileVersion", "([0-9, ]*)\\0"\r?$/\1/p' "$rcfile" | tr -d '\r')
@@ -91,7 +102,7 @@ for rcfile in version.rc; do
     if [ "$ref_tuple" = "$tuple" ]; then
         ok "$rcfile FileVersion $tuple"
     else
-        not_ok "$rcfile FileVersion $tuple disagrees with SDL_ttf.h $ref_tuple"
+        not_ok "$rcfile FileVersion $tuple disagrees with SDL_rtf.h $ref_tuple"
     fi
 
     tuple=$(sed -Ene 's/^ *VALUE "ProductVersion", "([0-9, ]*)\\0"\r?$/\1/p' "$rcfile" | tr -d '\r')
@@ -99,7 +110,7 @@ for rcfile in version.rc; do
     if [ "$ref_tuple" = "$tuple" ]; then
         ok "$rcfile ProductVersion $tuple"
     else
-        not_ok "$rcfile ProductVersion $tuple disagrees with SDL_ttf.h $ref_tuple"
+        not_ok "$rcfile ProductVersion $tuple disagrees with SDL_rtf.h $ref_tuple"
     fi
 done
 
