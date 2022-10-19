@@ -170,13 +170,14 @@ if(SDL2RTF_INSTALL)
     )
 
     if(WIN32 AND NOT MINGW)
-        set(PKG_PREFIX "cmake")
+        set(SDLRTF_INSTALL_CMAKEDIR_DEFAULT "cmake")
     else()
-        set(PKG_PREFIX "${CMAKE_INSTALL_LIBDIR}/cmake/SDL2_rtf")
+        set(SDLRTF_INSTALL_CMAKEDIR_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake/SDL2_ttf")
     endif()
+    set(SDLRTF_INSTALL_CMAKEDIR "${SDLRTF_INSTALL_CMAKEDIR_DEFAULT}" CACHE STRING "Location where to install SDL2_rtfConfig.cmake")
 
     configure_package_config_file(SDL2_rtfConfig.cmake.in SDL2_rtfConfig.cmake
-        INSTALL_DESTINATION "${PKG_PREFIX}"
+        INSTALL_DESTINATION "${SDLRTF_INSTALL_CMAKEDIR}"
     )
     write_basic_package_version_file("${PROJECT_BINARY_DIR}/SDL2_rtfConfigVersion.cmake"
         VERSION ${FULL_VERSION}
@@ -186,13 +187,13 @@ if(SDL2RTF_INSTALL)
         FILES
             "${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtfConfig.cmake"
             "${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtfConfigVersion.cmake"
-        DESTINATION ${PKG_PREFIX}
+        DESTINATION ${SDLRTF_INSTALL_CMAKEDIR}
         COMPONENT devel
     )
     install(EXPORT SDL2_rtfTargets
         FILE SDL2_rtf-${sdl2_rtf_install_name_infix}-targets.cmake
         NAMESPACE SDL2_rtf::
-        DESTINATION "${PKG_PREFIX}"
+        DESTINATION "${SDLRTF_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
 
