@@ -159,10 +159,7 @@ CheckVisibilityHidden()
 dnl Check for SDL
 SDL_VERSION=2.0.0
 AC_SUBST([SDL_VERSION])
-AM_PATH_SDL2($SDL_VERSION,
-            :,
-	    AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
-)
+PKG_CHECK_MODULES([SDL], [sdl2 >= $SDL_VERSION],, AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!]))
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LIBS="$LIBS $SDL_LIBS"
 
@@ -177,8 +174,7 @@ if test x$enable_SDL_ttf = xyes; then
     if test x$have_SDL_ttf != xyes; then
         AC_MSG_WARN([*** Can't find the SDL2_ttf library - not building showrtf.
 The SDL2_ttf library can be found at:
-http://www.libsdl.org/projects/SDL_ttf/
-])
+http://www.libsdl.org/projects/SDL_ttf/])
     fi
 fi
 AM_CONDITIONAL(HAVE_SDL_TTF, test x$have_SDL_ttf = xyes)
