@@ -72,19 +72,18 @@ if(NOT TARGET ${sdl2ttf_target_name})
 endif()
 
 add_library(SDL2_rtf
-    rtfactn.c
-    rtfdecl.h
-    rtfreadr.c
-    rtftype.h
-    SDL_rtf.c
-    SDL_rtf.h
-    SDL_rtfreadr.c
-    SDL_rtfreadr.h
+    src/rtfactn.c
+    src/rtfreadr.c
+    src/SDL_rtf.c
+    src/SDL_rtfreadr.c
 )
 add_library(SDL2_rtf::${sdl2_rtf_export_name} ALIAS SDL2_rtf)
 target_include_directories(SDL2_rtf PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/SDL2>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/SDL2>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include/SDL2>"
 )
 target_compile_definitions(SDL2_rtf PRIVATE
     BUILD_SDL
@@ -95,7 +94,7 @@ target_compile_definitions(SDL2_rtf PRIVATE
 target_link_libraries(SDL2_rtf PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}> $<BUILD_INTERFACE:${sdl2ttf_target_name}>)
 if(WIN32 AND SDL2RTF_BUILD_SHARED_LIBS)
     target_sources(SDL2_rtf PRIVATE
-        version.rc
+        src/version.rc
     )
 endif()
 set_target_properties(SDL2_rtf PROPERTIES
@@ -165,7 +164,7 @@ if(SDL2RTF_INSTALL)
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT library
     )
     install(
-        FILES "${CMAKE_CURRENT_SOURCE_DIR}/SDL_rtf.h"
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL2/SDL_rtf.h"
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL2" COMPONENT DEVEL
     )
 
@@ -241,7 +240,7 @@ if(SDL2RTF_INSTALL)
 endif()
 
 if(SDL2RTF_SAMPLES)
-    add_executable(showrtf showrtf.c)
+    add_executable(showrtf examples/showrtf.c)
 
     find_package(SDL2main QUIET)
 
