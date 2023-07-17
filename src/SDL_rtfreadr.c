@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL_rtf.h"
+#include <SDL3/SDL_rtf.h>
 #include "SDL_rtfreadr.h"
 
 #include "rtftype.h"
@@ -107,7 +107,7 @@ int RTF_GetCharacterOffsets(void *fontEngine, void *font,
  */
 int RTF_GetChar(void *stream, unsigned char *c)
 {
-    return ((SDL_RWops *) stream)->read((SDL_RWops *) stream, c, 1, 1);
+    return ((SDL_RWops *) stream)->read((SDL_RWops *) stream, c, 1);
 }
 
 /*
@@ -145,15 +145,15 @@ int ecRenderText(RTF_Context *ctx, const SDL_Rect *rect, int yOffset)
 
     ecReflowText(ctx, rect->w);
 
-    SDL_RenderGetClipRect(renderer, &savedRect);
-    SDL_RenderSetClipRect(renderer, rect);
+    SDL_GetRenderClipRect(renderer, &savedRect);
+    SDL_SetRenderClipRect(renderer, rect);
     for (line = ctx->start; line && yOffset < rect->h; line = line->next)
     {
         if (yOffset + line->lineHeight > 0)
             RenderLine(ctx, line, rect, yOffset);
         yOffset += line->lineHeight;
     }
-    SDL_RenderSetClipRect(renderer, &savedRect);
+    SDL_SetRenderClipRect(renderer, &savedRect);
 
     return ecOK;
 }
@@ -365,8 +365,9 @@ static int ReflowLine(RTF_Context *ctx, RTF_Line *line, int width)
 static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, int yOffset)
 {
     SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
-    SDL_Rect dstRect;
+    SDL_FRect dstRect;
     RTF_Surface *surface;
+    int w, h;
 
     for (surface = line->startSurface; surface; surface = surface->next)
     {
@@ -374,8 +375,10 @@ static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, i
 
         dstRect.x = rect->x + surface->x;
         dstRect.y = rect->y + yOffset + surface->y;
-        SDL_QueryTexture(texture, NULL, NULL, &dstRect.w, &dstRect.h);
-        SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+        SDL_QueryTexture(texture, NULL, NULL, &w, &h);
+        dstRect.w = (float)w;
+        dstRect.h = (float)h;
+        SDL_RenderTexture(renderer, texture, NULL, &dstRect);
     }
 }
 

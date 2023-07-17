@@ -4,12 +4,14 @@
 
 set -eu
 
+cd `dirname $0`/..
+
 # Needed so sed doesn't report illegal byte sequences on macOS
 export LC_CTYPE=C
 
-ref_major=$(sed -ne 's/^#define SDL_RTF_MAJOR_VERSION  *//p' SDL_rtf.h)
-ref_minor=$(sed -ne 's/^#define SDL_RTF_MINOR_VERSION  *//p' SDL_rtf.h)
-ref_micro=$(sed -ne 's/^#define SDL_RTF_PATCHLEVEL  *//p' SDL_rtf.h)
+ref_major=$(sed -ne 's/^#define SDL_RTF_MAJOR_VERSION  *//p' include/SDL3/SDL_rtf.h)
+ref_minor=$(sed -ne 's/^#define SDL_RTF_MINOR_VERSION  *//p' include/SDL3/SDL_rtf.h)
+ref_micro=$(sed -ne 's/^#define SDL_RTF_PATCHLEVEL  *//p' include/SDL3/SDL_rtf.h)
 ref_version="${ref_major}.${ref_minor}.${ref_micro}"
 
 tests=0
@@ -26,33 +28,11 @@ not_ok () {
     failed=1
 }
 
-major=$(sed -Ene 's/^m4_define\(\[MAJOR_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
-minor=$(sed -Ene 's/^m4_define\(\[MINOR_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
-micro=$(sed -Ene 's/^m4_define\(\[MICRO_VERSION_MACRO\], \[([0-9]*)\]\)$/\1/p' configure.ac)
-version="${major}.${minor}.${micro}"
-ref_sdl_req=$(sed -ne 's/^SDL_VERSION=//p' configure.ac)
-
-if [ "$ref_version" = "$version" ]; then
-    ok "configure.ac $version"
-else
-    not_ok "configure.ac $version disagrees with SDL_rtf.h $ref_version"
-fi
-
-major=$(sed -ne 's/^MAJOR_VERSION=//p' configure)
-minor=$(sed -ne 's/^MINOR_VERSION=//p' configure)
-micro=$(sed -ne 's/^MICRO_VERSION=//p' configure)
-version="${major}.${minor}.${micro}"
-
-if [ "$ref_version" = "$version" ]; then
-    ok "configure $version"
-else
-    not_ok "configure $version disagrees with SDL_rtf.h $ref_version"
-fi
-
 major=$(sed -ne 's/^set(MAJOR_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
 minor=$(sed -ne 's/^set(MINOR_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
 micro=$(sed -ne 's/^set(MICRO_VERSION \([0-9]*\))$/\1/p' CMakeLists.txt)
-sdl_req=$(sed -ne 's/^set(SDL_REQUIRED_VERSION \([0-9.]*\))$/\1/p' CMakeLists.txt)
+ref_sdl_req=$(sed -ne 's/^set(SDL_REQUIRED_VERSION \([0-9.]*\))$/\1/p' CMakeLists.txt)
+ref_sdlttf_req=$(sed -ne 's/^set(SDLTTF_REQUIRED_VERSION \([0-9.]*\))$/\1/p' CMakeLists.txt)
 version="${major}.${minor}.${micro}"
 
 if [ "$ref_version" = "$version" ]; then
@@ -61,24 +41,7 @@ else
     not_ok "CMakeLists.txt $version disagrees with SDL_rtf.h $ref_version"
 fi
 
-if [ "$ref_sdl_req" = "$sdl_req" ]; then
-    ok "CMakeLists.txt $sdl_req"
-else
-    not_ok "CMakeLists.txt SDL_REQUIRED_VERSION=$sdl_req disagrees with configure.ac SDL_VERSION=$ref_sdl_req"
-fi
-
-major=$(sed -ne 's/^MAJOR_VERSION *= *//p' Makefile.os2)
-minor=$(sed -ne 's/^MINOR_VERSION *= *//p' Makefile.os2)
-micro=$(sed -ne 's/^MICRO_VERSION *= *//p' Makefile.os2)
-version="${major}.${minor}.${micro}"
-
-if [ "$ref_version" = "$version" ]; then
-    ok "Makefile.os2 $version"
-else
-    not_ok "Makefile.os2 $version disagrees with SDL_rtf.h $ref_version"
-fi
-
-for rcfile in version.rc; do
+for rcfile in src/version.rc; do
     tuple=$(sed -ne 's/^ *FILEVERSION *//p' "$rcfile" | tr -d '\r')
     ref_tuple="${ref_major},${ref_minor},${ref_micro},0"
 

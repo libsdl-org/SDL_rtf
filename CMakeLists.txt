@@ -1,259 +1,248 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # See docs/release_checklist.md
-set(MAJOR_VERSION 2)
+set(MAJOR_VERSION 3)
 set(MINOR_VERSION 0)
 set(MICRO_VERSION 0)
-set(SDL_REQUIRED_VERSION 2.0.0)
+set(SDL_REQUIRED_VERSION 3.0.0)
 
-include(PrivateSdlFunctions)
-sdl_calculate_derived_version_variables()
+set(SDLTTF_REQUIRED_VERSION 3.0.0)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
     message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the SDL_rtf source code and call cmake from there")
 endif()
 
-project(SDL2_rtf
+project(SDL3_rtf
     LANGUAGES C
-    VERSION "${FULL_VERSION}"
+    VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${MICRO_VERSION}"
 )
+
+include(PrivateSdlFunctions)
+include(sdlmanpages)
+sdl_calculate_derived_version_variables(${MAJOR_VERSION} ${MINOR_VERSION} ${MICRO_VERSION})
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    set(SDL2RTF_ROOTPROJECT ON)
+    set(SDL3RTF_ROOTPROJECT ON)
 else()
-    set(SDL2RTF_ROOTPROJECT OFF)
+    set(SDL3RTF_ROOTPROJECT OFF)
 endif()
-
-# Set defaults preventing destination file conflicts
-set(SDL2RTF_DEBUG_POSTFIX "d"
-    CACHE STRING "Name suffix for debug builds")
-mark_as_advanced(SDL2RTF_DEBUG_POSTFIX)
 
 # Assume MSVC projects don't have a package manager and need vendored dependencies (by default).
 # Most other platforms have some kind of package manager.
 # FIXME: consider a package manager such as conan/vcpkg instead of vendoring
-if(MSVC)
+if(ANDROID OR MSVC)
     set(vendored_default TRUE)
 else()
     set(vendored_default FALSE)
 endif()
 
+set(sdl3rtf_install_enableable ON)
+if ((TARGET SDL3-shared OR TARGET SDL3-static OR TARGET SDL3_mixer-shared OR TARGET SDL3_mixer-static) AND SDL_DISABLE_INSTALL)
+    # Cannot install SDL3_rtf when SDL3 is built in same built, and is not installed.
+    set(sdl3rtf_install_enableable OFF)
+endif()
+
+include(CMakeDependentOption)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
+include(CheckSymbolExists)
 
 option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
 option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
 
+cmake_dependent_option(SDL3RTF_INSTALL "Enable SDL3_rtf install target" ${SDL3RTF_ROOTPROJECT} "${sdl3rtf_install_enableable}" OFF)
+cmake_dependent_option(SDL3RTF_INSTALL_MAN "Install man pages for SDL3_rtf" ${SDL3RTF_ROOTPROJECT} "SDL3RTF_INSTALL" OFF)
+option(SDL3RTF_WERROR "Treat warnings as errors" OFF)
+
+option(SDL3RTF_SAMPLES "Build the SDL3_rtf sample program(s)" ${SDL3RTF_ROOTPROJECT})
+cmake_dependent_option(SDL3RTF_SAMPLES_INSTALL "Install the SDL3_rtf sample program(s)" OFF "SDL3RTF_SAMPLES;SDL3RTF_INSTALL" OFF)
+
 # Save BUILD_SHARED_LIBS variable
-set(SDL2RTF_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
+set(SDL3RTF_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
 
-option(SDL2RTF_SAMPLES "Build the SDL2_rtf sample program(s)" ${SDL2RTF_ROOTPROJECT})
-option(SDL2RTF_INSTALL "Enable SDL2_rtf install target" ${SDL2RTF_ROOTPROJECT})
+set(sdl_required_components Headers)
 
-if(SDL2RTF_BUILD_SHARED_LIBS)
-    set(sdl2_rtf_export_name SDL2_rtf)
-    set(sdl2_rtf_install_name_infix shared)
-    set(sdl2_target_name SDL2::SDL2)
-    set(sdl2ttf_target_name SDL2_ttf::SDL2_ttf)
+if(SDL3RTF_BUILD_SHARED_LIBS)
+    set(sdl3_rtf_target_name SDL3_rtf-shared)
+    set(sdl3_target_name SDL3::SDL3-shared)
+
+    list(APPEND sdl_required_components SDL3-shared)
+
+    set(sdl3ttf_target_name SDL3_ttf::SDL3_ttf-shared)
 else()
-    set(sdl2_rtf_export_name SDL2_rtf-static)
-    set(sdl2_rtf_install_name_infix static)
-    set(sdl2_target_name SDL2::SDL2-static)
-    set(sdl2ttf_target_name SDL2_ttf::SDL2_ttf-static)
+    set(sdl3_rtf_target_name SDL3_rtf-static)
+    set(sdl3_target_name SDL3::SDL3)
+
+    set(sdl3ttf_target_name SDL3_ttf::SDL3_ttf)
 endif()
 
-sdl_find_sdl2(${sdl2_target_name} ${SDL_REQUIRED_VERSION})
-if(NOT TARGET ${sdl2ttf_target_name})
-    find_package(SDL2_ttf REQUIRED)
+if(NOT TARGET SDL3::Headers OR NOT TARGET ${sdl3_target_name})
+    find_package(SDL3 ${SDL_REQUIRED_VERSION} REQUIRED COMPONENTS ${sdl_required_components})
 endif()
 
-add_library(SDL2_rtf
+if(NOT TARGET ${sdl3ttf_target_name})
+    find_package(SDL3_ttf REQUIRED)
+endif()
+
+add_library(${sdl3_rtf_target_name}
     src/rtfactn.c
     src/rtfreadr.c
     src/SDL_rtf.c
     src/SDL_rtfreadr.c
 )
-add_library(SDL2_rtf::${sdl2_rtf_export_name} ALIAS SDL2_rtf)
-target_include_directories(SDL2_rtf PUBLIC
+add_library(SDL3_rtf::${sdl3_rtf_target_name} ALIAS ${sdl3_rtf_target_name})
+if(NOT TARGET SDL3_rtf::SDL3_rtf)
+    add_library(SDL3_rtf::SDL3_rtf ALIAS ${sdl3_rtf_target_name})
+endif()
+target_include_directories(${sdl3_rtf_target_name} PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/SDL2>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include/SDL2>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include/SDL3>"
 )
-target_compile_definitions(SDL2_rtf PRIVATE
+target_compile_definitions(${sdl3_rtf_target_name} PRIVATE
     BUILD_SDL
     SDL_BUILD_MAJOR_VERSION=${MAJOR_VERSION}
     SDL_BUILD_MINOR_VERSION=${MINOR_VERSION}
     SDL_BUILD_MICRO_VERSION=${MICRO_VERSION}
 )
-target_link_libraries(SDL2_rtf PRIVATE $<BUILD_INTERFACE:${sdl2_target_name}> $<BUILD_INTERFACE:${sdl2ttf_target_name}>)
-if(WIN32 AND SDL2RTF_BUILD_SHARED_LIBS)
-    target_sources(SDL2_rtf PRIVATE
+target_link_libraries(${sdl3_rtf_target_name} PUBLIC SDL3::Headers)
+if(SDL3RTF_BUILD_SHARED_LIBS)
+    target_link_libraries(${sdl3_rtf_target_name} PRIVATE SDL3::SDL3-shared)
+endif()
+sdl_add_warning_options(${sdl3_rtf_target_name} WARNING_AS_ERROR ${SDL3RTF_WERROR})
+if(WIN32 AND SDL3RTF_BUILD_SHARED_LIBS)
+    target_sources(${sdl3_rtf_target_name} PRIVATE
         src/version.rc
     )
 endif()
-set_target_properties(SDL2_rtf PROPERTIES
+set_target_properties(${sdl3_rtf_target_name} PROPERTIES
+    OUTPUT_NAME SDL3_rtf
     DEFINE_SYMBOL DLL_EXPORT
-    EXPORT_NAME ${sdl2_rtf_export_name}
+    EXPORT_NAME ${sdl3_rtf_target_name}
     C_VISIBILITY_PRESET "hidden"
 )
 if(NOT ANDROID)
-    set_target_properties(SDL2_rtf PROPERTIES
-        DEBUG_POSTFIX "${SDL2RTF_DEBUG_POSTFIX}"
-    )
     if(APPLE)
         # the SOVERSION property corresponds to the compatibility version and VERSION corresponds to the current version
         # https://cmake.org/cmake/help/latest/prop_tgt/SOVERSION.html#mach-o-versions
-        set_target_properties(SDL2_rtf PROPERTIES
-            SOVERSION "${DYLIB_COMPATIBILITY_VERSION}"
+        set_target_properties(${sdl3_rtf_target_name} PROPERTIES
+            SOVERSION "${DYLIB_COMPAT_VERSION}"
             VERSION "${DYLIB_CURRENT_VERSION}"
         )
     else()
-        set_target_properties(SDL2_rtf PROPERTIES
-            SOVERSION "${LT_MAJOR}"
-            VERSION "${LT_VERSION}"
+        set_target_properties(${sdl3_rtf_target_name} PROPERTIES
+            SOVERSION "${SO_VERSION_MAJOR}"
+            VERSION "${SO_VERSION}"
         )
     endif()
 endif()
-if(SDL2RTF_BUILD_SHARED_LIBS AND (APPLE OR (UNIX AND NOT ANDROID)))
-    add_custom_command(TARGET SDL2_rtf POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E create_symlink "$<TARGET_SONAME_FILE_NAME:SDL2_rtf>" "libSDL2_rtf$<$<CONFIG:Debug>:${SDL2RTF_DEBUG_POSTFIX}>$<TARGET_FILE_SUFFIX:SDL2_rtf>"
-        # BYPRODUCTS "libSDL2_rtf$<$<CONFIG:Debug>:${SDL2RTF_DEBUG_POSTFIX}>$<TARGET_FILE_SUFFIX:SDL2_rtf>" # Needs CMake 3.20
-        WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-    )
-endif()
-if(SDL2RTF_BUILD_SHARED_LIBS)
-    if(WIN32 OR OS2)
-        set_target_properties(SDL2_rtf PROPERTIES
+if(SDL3RTF_BUILD_SHARED_LIBS)
+    if(WIN32)
+        set_target_properties(${sdl3_rtf_target_name} PROPERTIES
             PREFIX ""
         )
     endif()
-    if(OS2)
-        # OS/2 doesn't support a DLL name longer than 8 characters.
-        set_target_properties(SDL2_rtf PROPERTIES
-            OUTPUT_NAME "SDL2rtf"
-        )
-    elseif(UNIX AND NOT ANDROID)
-        set_target_properties(SDL2_rtf PROPERTIES
-            OUTPUT_NAME "SDL2_rtf-${LT_RELEASE}"
-        )
+else()
+    if(MSVC)
+        set_target_properties(${sdl3_rtf_target_name} PROPERTIES
+            OUTPUT_NAME "SDL3_rtf-static"
+            )
     endif()
 endif()
 
-if(SDL2RTF_BUILD_SHARED_LIBS)
-    # Use `Compatible Interface Properties` to ensure a shared SDL2_Rtf is linked to a shared SDL2 library
-    set_property(TARGET SDL2_rtf PROPERTY INTERFACE_SDL2_SHARED ${SDL2RTF_BUILD_SHARED_LIBS})
-    set_property(TARGET SDL2_rtf APPEND PROPERTY COMPATIBLE_INTERFACE_BOOL SDL2_SHARED)
+if(SDL3RTF_BUILD_SHARED_LIBS)
+    # Use `Compatible Interface Properties` to ensure a shared SDL3_rtf is linked to a shared SDL3 library
+    set_property(TARGET ${sdl3_rtf_target_name} PROPERTY INTERFACE_SDL3_SHARED ${SDL3RTF_BUILD_SHARED_LIBS})
+    set_property(TARGET ${sdl3_rtf_target_name} APPEND PROPERTY COMPATIBLE_INTERFACE_BOOL SDL3_SHARED)
 endif()
 
-set(INSTALL_EXTRA_TARGETS)
-set(PC_LIBS)
-set(PC_REQUIRES SDL2_ttf)
+if(SDL3RTF_BUILD_SHARED_LIBS)
+    sdl_target_link_options_no_undefined(${sdl3_rtf_target_name})
+endif()
 
-if(SDL2RTF_INSTALL)
+if(SDL3RTF_INSTALL)
     install(
-        TARGETS SDL2_rtf
-        EXPORT SDL2_rtfTargets
+        TARGETS ${sdl3_rtf_target_name}
+        EXPORT SDL3_rtfTargets
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT devel
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT library
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT library
     )
     install(
-        FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL2/SDL_rtf.h"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL2" COMPONENT DEVEL
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3/SDL_rtf.h"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL3" COMPONENT devel
     )
 
     if(WIN32 AND NOT MINGW)
         set(SDLRTF_INSTALL_CMAKEDIR_DEFAULT "cmake")
     else()
-        set(SDLRTF_INSTALL_CMAKEDIR_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake/SDL2_ttf")
+        set(SDLRTF_INSTALL_CMAKEDIR_DEFAULT "${CMAKE_INSTALL_LIBDIR}/cmake/SDL3_rtf")
     endif()
-    set(SDLRTF_INSTALL_CMAKEDIR "${SDLRTF_INSTALL_CMAKEDIR_DEFAULT}" CACHE STRING "Location where to install SDL2_rtfConfig.cmake")
+    set(SDLRTF_INSTALL_CMAKEDIR "${SDLRTF_INSTALL_CMAKEDIR_DEFAULT}" CACHE STRING "Location where to install SDL3_rtfConfig.cmake")
+    set(SDLRTF_PKGCONFIG_INSTALLDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 
-    configure_package_config_file(SDL2_rtfConfig.cmake.in SDL2_rtfConfig.cmake
+    configure_package_config_file(cmake/SDL3_rtfConfig.cmake.in SDL3_rtfConfig.cmake
         INSTALL_DESTINATION "${SDLRTF_INSTALL_CMAKEDIR}"
     )
-    write_basic_package_version_file("${PROJECT_BINARY_DIR}/SDL2_rtfConfigVersion.cmake"
-        VERSION ${FULL_VERSION}
+    write_basic_package_version_file("${PROJECT_BINARY_DIR}/SDL3_rtfConfigVersion.cmake"
         COMPATIBILITY AnyNewerVersion
     )
     install(
         FILES
-            "${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtfConfig.cmake"
-            "${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtfConfigVersion.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/SDL3_rtfConfig.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/SDL3_rtfConfigVersion.cmake"
         DESTINATION ${SDLRTF_INSTALL_CMAKEDIR}
         COMPONENT devel
     )
-    install(EXPORT SDL2_rtfTargets
-        FILE SDL2_rtf-${sdl2_rtf_install_name_infix}-targets.cmake
-        NAMESPACE SDL2_rtf::
+    install(EXPORT SDL3_rtfTargets
+        FILE "${sdl3_rtf_target_name}-targets.cmake"
+        NAMESPACE SDL3_rtf::
         DESTINATION "${SDLRTF_INSTALL_CMAKEDIR}"
         COMPONENT devel
     )
 
-    set(prefix "${CMAKE_INSTALL_PREFIX}")
-    set(exec_prefix "\${prefix}")
-    set(libdir "\${exec_prefix}/${CMAKE_INSTALL_LIBDIR}")
-    set(includedir "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
-    set(PACKAGE "${PROJECT_NAME}")
-    set(VERSION ${FULL_VERSION})
-    set(SDL_VERSION ${SDL_REQUIRED_VERSION})
-    string(JOIN " " PC_REQUIRES ${PC_REQUIRES})
-    string(JOIN " " PC_LIBS ${PC_LIBS})
-    configure_file("${PROJECT_SOURCE_DIR}/SDL2_rtf.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtf.pc.intermediate" @ONLY)
-    file(GENERATE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtf-$<CONFIG>.pc" INPUT "${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtf.pc.intermediate")
+    file(RELATIVE_PATH SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${CMAKE_INSTALL_PREFIX}/${SDLRTF_PKGCONFIG_INSTALLDIR}" "${CMAKE_INSTALL_PREFIX}")
+    string(REGEX REPLACE "[/]+$" "" SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
+    set(SDL_PKGCONFIG_PREFIX "\${pcfiledir}/${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
 
-    set(PC_DESTDIR)
-    if(CMAKE_SYSTEM_NAME MATCHES FreeBSD)
-        # FreeBSD uses ${PREFIX}/libdata/pkgconfig
-        set(PC_DESTDIR "libdata/pkgconfig")
-    else()
-        set(PC_DESTDIR "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
-    endif()
-    # Always install SDL2_rtf.pc file: libraries might be different between config modes
-    install(CODE "
-        # FIXME: use file(COPY_FILE) if minimum CMake version >= 3.21
-        execute_process(COMMAND \"\${CMAKE_COMMAND}\" -E copy_if_different
-            \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtf-$<CONFIG>.pc\"
-            \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtf.pc\")
-        file(INSTALL DESTINATION \"\${CMAKE_INSTALL_PREFIX}/${PC_DESTDIR}\"
-            TYPE FILE
-            FILES \"${CMAKE_CURRENT_BINARY_DIR}/SDL2_rtf.pc\")" COMPONENT devel)
+    configure_file(cmake/sdl3-rtf.pc.in sdl3-rtf.pc @ONLY)
 
-    if(SDL2RTF_BUILD_SHARED_LIBS AND (APPLE OR (UNIX AND NOT ANDROID)))
-        install(FILES
-            "${PROJECT_BINARY_DIR}/libSDL2_rtf$<$<CONFIG:Debug>:${SDL2RTF_DEBUG_POSTFIX}>$<TARGET_FILE_SUFFIX:SDL2_rtf>"
-            DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-            COMPONENT devel
-        )
-    endif()
+    # Always install sdl3-rtf.pc file: libraries might be different between config modes
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/sdl3-rtf.pc"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig" COMPONENT devel)
 
     install(FILES "LICENSE.txt"
         DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/licenses/${PROJECT_NAME}"
         COMPONENT library
     )
+
+    if(SDL3RTF_INSTALL_MAN)
+        SDL_generate_manpages(
+            SYMBOL "RTF_CreateContext"
+            WIKIHEADERS_PL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build-scripts/wikiheaders.pl"
+        )
+    endif()
 endif()
 
-if(SDL2RTF_SAMPLES)
+if(SDL3RTF_SAMPLES)
     add_executable(showrtf examples/showrtf.c)
 
-    find_package(SDL2main QUIET)
-
     foreach(prog showrtf)
-        if(MINGW)
-            target_link_libraries(${prog} PRIVATE mingw32)
-            target_link_options(${prog} PRIVATE -mwindows)
+        sdl_add_warning_options(${prog} WARNING_AS_ERROR ${SDL3RTF_WERROR})
+        target_link_libraries(${prog} PRIVATE SDL3_rtf::${sdl3_rtf_target_name})
+        target_link_libraries(${prog} PRIVATE ${sdl3ttf_target_name})
+        target_link_libraries(${prog} PRIVATE ${sdl3_target_name})
+
+        if(SDL3RTF_SAMPLES_INSTALL)
+            install(TARGETS ${prog}
+                RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+            )
         endif()
-        target_link_libraries(${prog} PRIVATE SDL2_rtf::${sdl2_rtf_export_name})
-        if(TARGET SDL2::SDL2main)
-            target_link_libraries(${prog} PRIVATE SDL2::SDL2main)
-        endif()
-        target_link_libraries(${prog} PRIVATE ${sdl2_target_name})
-        target_link_libraries(${prog} PRIVATE ${sdl2ttf_target_name})
     endforeach()
 endif()

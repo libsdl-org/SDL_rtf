@@ -3,7 +3,7 @@
  * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnrtfspec/html/rtfspec.asp
  */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "rtftype.h"
 #include "rtfdecl.h"
@@ -703,16 +703,16 @@ int ecPrintChar(RTF_Context *ctx, int ch)
         ch = '"';
 
     /* Convert character into UTF-8 */
-    if (ch <= 0x7fUL)
+    if ((Uint32)ch <= 0x7fUL)
     {
         ctx->data[ctx->datapos++] = ch;
     }
-    else if (ch <= 0x7ffUL)
+    else if ((Uint32)ch <= 0x7ffUL)
     {
         ctx->data[ctx->datapos++] = 0xc0 | (ch >> 6);
         ctx->data[ctx->datapos++] = 0x80 | (ch & 0x3f);
     }
-    else if (ch <= 0xffffUL)
+    else if ((Uint32)ch <= 0xffffUL)
     {
         ctx->data[ctx->datapos++] = 0xe0 | (ch >> 12);
         ctx->data[ctx->datapos++] = 0x80 | ((ch >> 6) & 0x3f);

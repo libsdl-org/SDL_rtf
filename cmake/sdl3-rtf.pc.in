@@ -1,0 +1,11 @@
+prefix=@SDL_PKGCONFIG_PREFIX@
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: @PROJECT_NAME@
+Description: Support for Rich Text Format (.rtf) files with Simple Directmedia Layer
+Version: @PROJECT_VERSION@
+Requires: sdl3 >= @SDL_REQUIRED_VERSION@
+Libs: -L${libdir} -lSDL3_rtf
+Cflags: -I${includedir} -I${includedir}/SDL3 @SDL_PC_CFLAGS@
