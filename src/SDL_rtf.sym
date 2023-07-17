@@ -1,0 +1,14 @@
+SDL3_rtf_0.0.0 {
+  global:
+    RTF_CreateContext;
+    RTF_FreeContext;
+    RTF_GetAuthor;
+    RTF_GetHeight;
+    RTF_GetSubject;
+    RTF_GetTitle;
+    RTF_Linked_Version;
+    RTF_Load;
+    RTF_Load_RW;
+    RTF_Render;
+  local: *;
+};

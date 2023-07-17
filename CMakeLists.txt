@@ -166,6 +166,8 @@ if(SDL3RTF_BUILD_SHARED_LIBS)
     sdl_target_link_options_no_undefined(${sdl3_rtf_target_name})
 endif()
 
+sdl_target_link_option_version_file(${sdl3_rtf_target_name} "${CMAKE_CURRENT_SOURCE_DIR}/src/SDL_rtf.sym")
+
 if(SDL3RTF_INSTALL)
     install(
         TARGETS ${sdl3_rtf_target_name}
