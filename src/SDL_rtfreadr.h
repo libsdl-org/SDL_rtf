@@ -25,7 +25,7 @@
 #define _SDL_RTFREADR_H
 
 #include "rtftype.h"
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 int ecReflowText(RTF_Context *ctx, int width);
 int ecRenderText(RTF_Context *ctx, const SDL_Rect *rect, int yOffset);

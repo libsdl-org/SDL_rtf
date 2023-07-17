@@ -21,9 +21,9 @@
 
 /* A simple program to test the RTF rendering of the SDL_rtf library */
 
-#include "SDL.h"
-#include "SDL_ttf.h"
-#include "SDL_rtf.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_ttf.h>
+#include <SDL3/SDL_rtf.h>
 
 #define SCREEN_WIDTH    640
 #define SCREEN_HEIGHT   480
@@ -55,10 +55,10 @@ static int FontFamilyToIndex(RTF_FontFamily family)
     }
 }
 
-static Uint16 UTF8_to_UNICODE(const char *utf8, int *advance)
+static Uint32 UTF8_to_UNICODE(const char *utf8, int *advance)
 {
     int i = 0;
-    Uint16 ch;
+    Uint32 ch;
 
     ch = ((const unsigned char *)utf8)[i];
     if ( ch >= 0xF0 ) {
@@ -82,6 +82,9 @@ static void * SDLCALL CreateFont(const char *name, RTF_FontFamily family, int ch
 {
     int index;
     TTF_Font *font;
+
+    (void)name;
+    (void)charset;
 
     index = FontFamilyToIndex(family);
     if (!FontList[index])
@@ -143,7 +146,7 @@ static SDL_Texture * SDLCALL RenderText(void *_font, SDL_Renderer *renderer, con
     SDL_Surface *surface = TTF_RenderUTF8_Blended(font, text, fg);
     if (surface) {
         texture = SDL_CreateTextureFromSurface(renderer, surface);
-        SDL_FreeSurface(surface);
+        SDL_DestroySurface(surface);
     }
     return texture;
 }
@@ -250,15 +253,15 @@ int main(int argc, char *argv[])
     while (!done) {
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
+            if (event.type == SDL_EVENT_WINDOW_RESIZED) {
                 float ratio = (float)offset / height;
                 SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Resetting window\n");
                 SDL_GetWindowSize(window, &w, &h);
-                SDL_RenderSetViewport(renderer, NULL);
+                SDL_SetRenderViewport(renderer, NULL);
                 height = RTF_GetHeight(ctx, w);
                 offset = (int)(ratio * height);
             }
-            if (event.type == SDL_KEYDOWN) {
+            if (event.type == SDL_EVENT_KEY_DOWN) {
                 switch(event.key.keysym.sym) {
                     case SDLK_ESCAPE:
                         done = 1;
@@ -300,7 +303,7 @@ int main(int argc, char *argv[])
                         break;
                 }
             }
-            if (event.type == SDL_QUIT) {
+            if (event.type == SDL_EVENT_QUIT) {
                 done = 1;
             }
         }

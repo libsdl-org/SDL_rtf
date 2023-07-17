@@ -8,6 +8,8 @@
 #include "rtftype.h"
 #include "rtfdecl.h"
 
+#include <stddef.h>
+
 /* RTF parser tables */
 
 /* Property descriptions */
@@ -354,6 +356,8 @@ int ecChangeDest(RTF_Context *ctx, IDEST idest)
  */
 int ecEndGroupAction(RTF_Context *ctx, RDS rds)
 {
+    (void)rds;
+
     switch (ctx->rds)
     {
         case rdsTitle:

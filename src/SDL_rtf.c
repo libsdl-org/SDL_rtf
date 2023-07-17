@@ -19,8 +19,8 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include "SDL.h"
-#include "SDL_rtf.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_rtf.h>
 
 #include "rtftype.h"
 #include "rtfdecl.h"
@@ -179,7 +179,7 @@ void RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset)
     SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
     SDL_Rect fullRect;
     if ( !rect ) {
-        SDL_RenderGetViewport(renderer, &fullRect);
+        SDL_GetRenderViewport(renderer, &fullRect);
         fullRect.x = 0;
         fullRect.y = 0;
         rect = &fullRect;

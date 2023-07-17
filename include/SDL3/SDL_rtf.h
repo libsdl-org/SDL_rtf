@@ -24,8 +24,8 @@
 #ifndef SDL_RTF_H_
 #define SDL_RTF_H_
 
-#include "SDL.h"
-#include "begin_code.h"
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_begin_code.h>
 
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
@@ -34,7 +34,7 @@ extern "C" {
 
 /* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
 */
-#define SDL_RTF_MAJOR_VERSION   2
+#define SDL_RTF_MAJOR_VERSION   3
 #define SDL_RTF_MINOR_VERSION   0
 #define SDL_RTF_PATCHLEVEL      0
 
@@ -65,7 +65,7 @@ extern "C" {
  *
  * \returns a pointer to the version information.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC const SDL_version * SDLCALL RTF_Linked_Version(void);
 
@@ -139,7 +139,7 @@ typedef struct _RTF_FontEngine
  * \param fontEngine the font engine to use for rendering text.
  * \returns a new RTF display context, or NULL on error.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngine);
 
@@ -155,7 +155,7 @@ extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, 
  * \param file the file path to load RTF data from.
  * \returns 0 on success, -1 on failure.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
 
@@ -175,7 +175,7 @@ extern DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
  * \param freesrc non-zero to close/free `src`, zero to leave open.
  * \returns 0 on success, -1 on failure.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC int SDLCALL RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int freesrc);
 
@@ -189,7 +189,7 @@ extern DECLSPEC int SDLCALL RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int fr
  * \param ctx the RTF context to query.
  * \returns the document title in UTF-8 encoding.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC const char * SDLCALL RTF_GetTitle(RTF_Context *ctx);
 
@@ -203,7 +203,7 @@ extern DECLSPEC const char * SDLCALL RTF_GetTitle(RTF_Context *ctx);
  * \param ctx the RTF context to query.
  * \returns the document subject in UTF-8 encoding.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC const char * SDLCALL RTF_GetSubject(RTF_Context *ctx);
 
@@ -217,7 +217,7 @@ extern DECLSPEC const char * SDLCALL RTF_GetSubject(RTF_Context *ctx);
  * \param ctx the RTF context to query.
  * \returns the document author in UTF-8 encoding.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC const char * SDLCALL RTF_GetAuthor(RTF_Context *ctx);
 
@@ -231,7 +231,7 @@ extern DECLSPEC const char * SDLCALL RTF_GetAuthor(RTF_Context *ctx);
  * \param width the width, in pixels, to use for text flow.
  * \returns the height, in pixels, of an RTF render area.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
 
@@ -248,7 +248,7 @@ extern DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
  * \param rect the area to render text into.
  * \param yOffset offset up (and clip) by this many pixels.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset);
 
@@ -263,7 +263,7 @@ extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yO
  *
  * \param ctx the RTF context to free.
  *
- * \since This function is available since SDL_rtf 2.0.0.
+ * \since This function is available since SDL_rtf 3.0.0.
  */
 extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
 
@@ -275,7 +275,7 @@ extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
 #ifdef __cplusplus
 }
 #endif
-#include "close_code.h"
+#include <SDL3/SDL_close_code.h>
 
 #endif /* SDL_RTF_H_ */
 
