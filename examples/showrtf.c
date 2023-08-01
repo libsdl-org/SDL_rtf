@@ -22,8 +22,8 @@
 /* A simple program to test the RTF rendering of the SDL_rtf library */
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_ttf.h>
-#include <SDL3/SDL_rtf.h>
+#include <SDL3_ttf/SDL_ttf.h>
+#include <SDL3_rtf/SDL_rtf.h>
 
 #define SCREEN_WIDTH    640
 #define SCREEN_HEIGHT   480

@@ -1,10 +1,10 @@
 projectfullname = SDL_rtf
 projectshortname = SDL_rtf
-incsubdir =
+incsubdir = include/SDL3_rtf
 wikisubdir = SDL_rtf
 apiprefixregex = RTF_
-mainincludefname = SDL3/SDL_rtf.h
-versionfname = include/SDL3/SDL_rtf.h
+mainincludefname = SDL3_rtf/SDL_rtf.h
+versionfname = include/SDL3_rtf/SDL_rtf.h
 versionmajorregex = \A\#define\s+SDL_RTF_MAJOR_VERSION\s+(\d+)\Z
 versionminorregex = \A\#define\s+SDL_RTF_MINOR_VERSION\s+(\d+)\Z
 versionpatchregex = \A\#define\s+SDL_RTF_PATCHLEVEL\s+(\d+)\Z

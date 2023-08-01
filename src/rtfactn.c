@@ -3,7 +3,7 @@
  * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnrtfspec/html/rtfspec.asp
  */
 
-#include "SDL.h"
+#include <SDL3/SDL.h>
 
 #include "rtftype.h"
 #include "rtfdecl.h"

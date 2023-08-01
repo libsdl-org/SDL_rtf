@@ -20,7 +20,7 @@
 */
 
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_rtf.h>
+#include <SDL3_rtf/SDL_rtf.h>
 
 #include "rtftype.h"
 #include "rtfdecl.h"

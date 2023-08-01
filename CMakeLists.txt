@@ -101,9 +101,9 @@ endif()
 target_include_directories(${sdl3_rtf_target_name} PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3_rtf>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include/SDL3>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include/SDL3_rtf>"
 )
 target_compile_definitions(${sdl3_rtf_target_name} PRIVATE
     BUILD_SDL
@@ -177,8 +177,8 @@ if(SDL3RTF_INSTALL)
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT library
     )
     install(
-        FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3/SDL_rtf.h"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL3" COMPONENT devel
+        FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/SDL3_rtf/SDL_rtf.h"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SDL3_rtf" COMPONENT devel
     )
 
     if(WIN32 AND NOT MINGW)
@@ -226,6 +226,7 @@ if(SDL3RTF_INSTALL)
 
     if(SDL3RTF_INSTALL_MAN)
         SDL_generate_manpages(
+            HEADERS_DIR "${PROJECT_DIR}/include/SDL3_rtf"
             SYMBOL "RTF_CreateContext"
             WIKIHEADERS_PL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build-scripts/wikiheaders.pl"
         )
