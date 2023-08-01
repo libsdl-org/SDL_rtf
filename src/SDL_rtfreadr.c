@@ -19,7 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
-#include <SDL3/SDL_rtf.h>
+#include <SDL3_rtf/SDL_rtf.h>
 #include "SDL_rtfreadr.h"
 
 #include "rtftype.h"
