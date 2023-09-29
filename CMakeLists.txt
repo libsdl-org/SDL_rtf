@@ -19,8 +19,9 @@ project(SDL3_rtf
     VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${MICRO_VERSION}"
 )
 
-include(PrivateSdlFunctions)
-include(sdlmanpages)
+include("${SDL3_rtf_SOURCE_DIR}/cmake/GetGitRevisionDescription.cmake" )
+include("${SDL3_rtf_SOURCE_DIR}/cmake/PrivateSdlFunctions.cmake")
+include("${SDL3_rtf_SOURCE_DIR}/cmake/sdlmanpages.cmake")
 sdl_calculate_derived_version_variables(${MAJOR_VERSION} ${MINOR_VERSION} ${MICRO_VERSION})
 
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
@@ -225,10 +226,12 @@ if(SDL3RTF_INSTALL)
     )
 
     if(SDL3RTF_INSTALL_MAN)
+        sdl_get_git_revision_hash(SDL3RTF_REVISION)
         SDL_generate_manpages(
             HEADERS_DIR "${PROJECT_DIR}/include/SDL3_rtf"
             SYMBOL "RTF_CreateContext"
             WIKIHEADERS_PL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build-scripts/wikiheaders.pl"
+            REVISION "${SDL3RTF_REVISION}"
         )
     endif()
 endif()
