@@ -8,4 +8,4 @@ Description: Support for Rich Text Format (.rtf) files with Simple Directmedia L
 Version: @PROJECT_VERSION@
 Requires: sdl3 >= @SDL_REQUIRED_VERSION@
 Libs: -L${libdir} -lSDL3_rtf
-Cflags: -I${includedir} @SDL_PC_CFLAGS@
+Cflags: -I${includedir}
