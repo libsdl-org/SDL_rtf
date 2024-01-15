@@ -121,6 +121,10 @@ int RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int freesrc)
             RTF_SetError("Couldn't find font for text");
             retval = -1;
             break;
+        default:
+            RTF_SetError("Unknown error");
+            retval = -1;
+            break;
     }
     while ( ctx->psave ) {
         ecPopRtfState(ctx);
