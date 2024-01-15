@@ -96,7 +96,7 @@ static void * SDLCALL CreateFont(const char *name, RTF_FontFamily family, int ch
             TTF_style |= TTF_STYLE_ITALIC;
         if ( style & RTF_FontUnderline )
             TTF_style |= TTF_STYLE_UNDERLINE;
-        TTF_SetFontStyle(font, style);
+        TTF_SetFontStyle(font, TTF_style);
     }
 
     /* FIXME: What do we do with the character set? */
