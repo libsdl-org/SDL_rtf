@@ -1,17 +1,36 @@
-# sdl2_rtf cmake project-config input for CMakeLists.txt script
+# sdl3_rtf cmake project-config input for CMakeLists.txt script
 
 include(FeatureSummary)
-set_package_properties(SDL2_rtf PROPERTIES
+set_package_properties(SDL3_rtf PROPERTIES
     URL "https://www.libsdl.org/projects/SDL_rtf/"
     DESCRIPTION "Support for Rich Text Format (.rtf) files with Simple Directmedia Layer"
 )
 
-set(SDL2_rtf_FOUND ON)
+set(SDL3_rtf_FOUND ON)
 
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL2_rtf-shared-targets.cmake")
-    include("${CMAKE_CURRENT_LIST_DIR}/SDL2_rtf-shared-targets.cmake")
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_rtf-shared-targets.cmake")
+    include("${CMAKE_CURRENT_LIST_DIR}/SDL3_rtf-shared-targets.cmake")
 endif()
 
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL2_rtf-static-targets.cmake")
-    include("${CMAKE_CURRENT_LIST_DIR}/SDL2_rtf-static-targets.cmake")
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/SDL3_rtf-static-targets.cmake")
+    include("${CMAKE_CURRENT_LIST_DIR}/SDL3_rtf-static-targets.cmake")
+endif()
+
+function(_sdl_create_target_alias_compat NEW_TARGET TARGET)
+    if(CMAKE_VERSION VERSION_LESS "3.18")
+        # Aliasing local targets is not supported on CMake < 3.18, so make it global.
+        add_library(${NEW_TARGET} INTERFACE IMPORTED)
+        set_target_properties(${NEW_TARGET} PROPERTIES INTERFACE_LINK_LIBRARIES "${TARGET}")
+    else()
+        add_library(${NEW_TARGET} ALIAS ${TARGET})
+    endif()
+endfunction()
+
+# Make sure SDL3_rtf::SDL3_rtf always exists
+if(NOT TARGET SDL3_rtf::SDL3_rtf)
+    if(TARGET SDL3_rtf::SDL3_rtf-shared)
+        _sdl_create_target_alias_compat(SDL3_rtf::SDL3_rtf SDL3_rtf::SDL3_rtf-shared)
+    else()
+        _sdl_create_target_alias_compat(SDL3_rtf::SDL3_rtf SDL3_rtf::SDL3_rtf-static)
+    endif()
 endif()

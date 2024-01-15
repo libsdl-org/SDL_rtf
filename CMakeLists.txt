@@ -101,7 +101,7 @@ if(NOT TARGET SDL3_rtf::SDL3_rtf)
 endif()
 target_include_directories(${sdl3_rtf_target_name} PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 target_compile_definitions(${sdl3_rtf_target_name} PRIVATE
     BUILD_SDL
