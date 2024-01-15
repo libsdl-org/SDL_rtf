@@ -62,7 +62,7 @@ static Uint16 UTF8_to_UNICODE(const char *utf8, int *advance)
 
     ch = ((const unsigned char *)utf8)[i];
     if ( ch >= 0xF0 ) {
-        ch  =  (Uint16)(utf8[i]&0x07) << 18;
+        ch  =  (Uint16)((utf8[i]&0x07) << 18);
         ch |=  (Uint16)(utf8[++i]&0x3F) << 12;
         ch |=  (Uint16)(utf8[++i]&0x3F) << 6;
         ch |=  (Uint16)(utf8[++i]&0x3F);
