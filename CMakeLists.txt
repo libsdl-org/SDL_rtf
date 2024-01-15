@@ -52,8 +52,13 @@ include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 include(CheckSymbolExists)
 
-option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ON)
-option(BUILD_SHARED_LIBS "Build the library as a shared library" ON)
+set(PLATFORM_SUPPORTS_SHARED ON)
+if(VITA OR PSP OR PS2 OR N3DS OR RISCOS)
+    set(PLATFORM_SUPPORTS_SHARED OFF)
+endif()
+
+option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ${PLATFORM_SUPPORTS_SHARED})
+cmake_dependent_option(BUILD_SHARED_LIBS "Build the library as a shared library" ON PLATFORM_SUPPORTS_SHARED OFF)
 
 cmake_dependent_option(SDL3RTF_INSTALL "Enable SDL3_rtf install target" ${SDL3RTF_ROOTPROJECT} "${sdl3rtf_install_enableable}" OFF)
 cmake_dependent_option(SDL3RTF_INSTALL_MAN "Install man pages for SDL3_rtf" ${SDL3RTF_ROOTPROJECT} "SDL3RTF_INSTALL" OFF)
