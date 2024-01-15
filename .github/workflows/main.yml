@@ -1,0 +1,115 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  Build:
+    name: ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows (MSVC+CMake),         os: windows-latest, shell: sh,   cmake: '-DPerl_ROOT=C:/Strawberry/perl/bin/ -GNinja', msvc: 1, shared: 1, static: 0 }
+        - { name: Windows (mingw64+CMake),      os: windows-latest, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64, shared: 1, static: 0,
+            cmake: '-G "Ninja Multi-Config"' }
+        - { name: Linux,                        os: ubuntu-20.04,   shell: sh,   cmake: '-GNinja', shared: 1, static: 0 }
+        - { name: 'Linux (static)',             os: ubuntu-20.04,   shell: sh,   cmake: '-GNinja -DBUILD_SHARED_LIBS=OFF', shared: 0, static: 1 }
+        - { name: Macos,                        os: macos-latest,   shell: sh,   cmake: '-GNinja', shared: 1, static: 0 }
+
+    steps:
+    - uses: ilammy/msvc-dev-cmd@v1
+      if: ${{ matrix.platform.msvc }}
+      with:
+        arch: x64
+    - name: Set up Ninja
+      if: ${{ !contains(matrix.platform.shell, 'msys2') }}
+      uses: ashutoshvarma/setup-ninja@master
+      with:
+        version: 1.11.1
+    - name: Set up MSYS2
+      if: ${{ matrix.platform.shell == 'msys2 {0}' }}
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.platform.msystem }}
+        install: >-
+          ${{ matrix.platform.msys-env }}-cmake
+          ${{ matrix.platform.msys-env }}-gcc
+          ${{ matrix.platform.msys-env }}-freetype
+          ${{ matrix.platform.msys-env }}-harfbuzz
+          ${{ matrix.platform.msys-env }}-ninja
+          ${{ matrix.platform.msys-env }}-perl
+          ${{ matrix.platform.msys-env }}-pkg-config
+          ${{ matrix.platform.msys-env }}-zlib
+    - name: Set up SDL
+      id: sdl
+      uses: libsdl-org/setup-sdl@main
+      with:
+        cmake-generator: Ninja
+        version: 3-head
+        version-sdl-ttf: 3-head
+        sdl-test: true
+        shell: ${{ matrix.platform.shell }}
+    - name: Setup Macos dependencies
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+          brew install \
+            freetype \
+            harfbuzz \
+            ninja \
+            pkg-config \
+            ${NULL+}
+    - name: Set up Linux dependencies
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install \
+          cmake \
+          file \
+          fonts-dejavu-core \
+          libfreetype-dev \
+          libharfbuzz-dev \
+          ninja-build \
+          pkg-config \
+          ${NULL+}
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Check that versioning is consistent
+      # We only need to run this once: arbitrarily use the Linux build
+      if: ${{ runner.os == 'Linux' }}
+      run: ./build-scripts/test-versioning.sh
+
+    - name: Configure
+      run: |
+        cmake -B build-cmake \
+          -DBUILD_SHARED_LIBS=ON \
+          -DSDL3RTF_WERROR=ON \
+          -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=prefix_cmake \
+          ${{ matrix.platform.cmake }}
+    - name: Build
+      run: |
+        cmake --build build-cmake --config Release --verbose
+    - name: Install
+      run: |
+        set -eu
+        rm -rf prefix_cmake
+        cmake --install build-cmake/ --config Release --verbose
+        echo "SDL3_rtf_ROOT=$(pwd)/prefix_cmake" >> $GITHUB_ENV
+        ( cd prefix_cmake; find . ) | LC_ALL=C sort -u
+
+    - name: Verify CMake configuration files
+      run: |
+          cmake -S cmake/test -B cmake_config_build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DTEST_SHARED=${{ matrix.platform.shared }} \
+            -DTEST_STATIC=${{ matrix.platform.static }}
+          cmake --build cmake_config_build --verbose --config Release
