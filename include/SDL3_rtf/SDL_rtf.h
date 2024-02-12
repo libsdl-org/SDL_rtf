@@ -67,7 +67,7 @@ extern "C" {
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC const SDL_version * SDLCALL RTF_Linked_Version(void);
+extern DECLSPEC const SDL_Version * SDLCALL RTF_Linked_Version(void);
 
 typedef struct _RTF_Context RTF_Context;
 
