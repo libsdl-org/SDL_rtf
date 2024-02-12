@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
-    SDL_version *v;
+    const SDL_Version *v;
 
     if (SDL_Init(0) < 0) {
         SDL_Log("SDL_Init: could not initialize SDL: %s", SDL_GetError());
