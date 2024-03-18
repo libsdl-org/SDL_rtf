@@ -160,24 +160,24 @@ extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, 
 extern DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
 
 /**
- * Set the text of an RTF context, with data loaded from an SDL_RWops.
+ * Set the text of an RTF context, with data loaded from an SDL_IOStream.
  *
  * This can be called multiple times to change the text displayed.
  *
- * If `freesrc` is non-zero, this function will close/free `src`, whether this
+ * If `closeio` is non-zero, this function will close `src`, whether this
  * function succeeded or not.
  *
  * On failure, call RTF_GetError() to get a human-readable text message
  * corresponding to the error.
  *
  * \param ctx the RTF context to update.
- * \param src the SDL_RWops to load RTF data from.
- * \param freesrc non-zero to close/free `src`, zero to leave open.
+ * \param src the SDL_IOStream to load RTF data from.
+ * \param closeio non-zero to close/free `src`, zero to leave open.
  * \returns 0 on success, -1 on failure.
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC int SDLCALL RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int freesrc);
+extern DECLSPEC int SDLCALL RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int closeio);
 
 /**
  * Get the title of an RTF document.

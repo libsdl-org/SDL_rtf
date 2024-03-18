@@ -70,7 +70,7 @@ RTF_Context *RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngin
  * This function returns 0 if it succeeds or -1 if it fails.
  * Use RTF_GetError() to get a text message corresponding to the error.
  */
-int RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int freesrc)
+int RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int closeio)
 {
     int retval;
 
@@ -131,19 +131,19 @@ int RTF_Load_RW(RTF_Context *ctx, SDL_RWops *src, int freesrc)
     }
     ctx->stream = NULL;
 
-    if ( freesrc ) {
-        SDL_RWclose(src);
+    if ( closeio ) {
+        SDL_CloseIO(src);
     }
     return(retval);
 }
 int RTF_Load(RTF_Context *ctx, const char *file)
 {
-    SDL_RWops *rw = SDL_RWFromFile(file, "rb");
-    if ( rw == NULL ) {
+    SDL_IOStream *src = SDL_IOFromFile(file, "rb");
+    if ( src == NULL ) {
         /*RTF_SetError(SDL_GetError());*/
         return -1;
     }
-    return RTF_Load_RW(ctx, rw, 1);
+    return RTF_Load_IO(ctx, src, 1);
 }
 
 /* Get the title of an RTF document */

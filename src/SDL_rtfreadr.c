@@ -107,7 +107,7 @@ int RTF_GetCharacterOffsets(void *fontEngine, void *font,
  */
 int RTF_GetChar(void *stream, unsigned char *c)
 {
-    return ((SDL_RWops *) stream)->read((SDL_RWops *) stream, c, 1);
+    return SDL_ReadIO((SDL_IOStream *)stream, c, 1);
 }
 
 /*
