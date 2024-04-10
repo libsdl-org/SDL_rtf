@@ -71,7 +71,7 @@ extern DECLSPEC const SDL_Version * SDLCALL RTF_Linked_Version(void);
 
 typedef struct _RTF_Context RTF_Context;
 
-typedef enum
+typedef enum RTF_FontFamily
 {
     RTF_FontDefault,    /* Unknown or default font */
     RTF_FontRoman,      /* Proportionally spaced serif fonts,
@@ -88,7 +88,7 @@ typedef enum
 }
 RTF_FontFamily;
 
-typedef enum
+typedef enum RTF_FontStyle
 {
     RTF_FontNormal    = 0x00,
     RTF_FontBold      = 0x01,
