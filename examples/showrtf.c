@@ -223,7 +223,7 @@ int main(int argc, char *argv[])
         return(3);
     }
 
-    if (SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer) < 0) {
+    if (SDL_CreateWindowAndRenderer("showrtf demo", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE, &window, &renderer) < 0) {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_CreateWindowAndRenderer() failed: %s\n", SDL_GetError());
         cleanup();
         return(4);
@@ -332,5 +332,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-/* vi: set ts=4 sw=4 expandtab: */
