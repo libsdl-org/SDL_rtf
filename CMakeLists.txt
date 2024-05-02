@@ -61,7 +61,7 @@ option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ${PLA
 cmake_dependent_option(BUILD_SHARED_LIBS "Build the library as a shared library" ON PLATFORM_SUPPORTS_SHARED OFF)
 
 cmake_dependent_option(SDL3RTF_INSTALL "Enable SDL3_rtf install target" ${SDL3RTF_ROOTPROJECT} "${sdl3rtf_install_enableable}" OFF)
-cmake_dependent_option(SDL3RTF_INSTALL_MAN "Install man pages for SDL3_rtf" ${SDL3RTF_ROOTPROJECT} "SDL3RTF_INSTALL" OFF)
+cmake_dependent_option(SDL3RTF_INSTALL_MAN "Install man pages for SDL3_rtf" OFF "SDL3RTF_INSTALL" OFF)
 option(SDL3RTF_WERROR "Treat warnings as errors" OFF)
 
 option(SDL3RTF_SAMPLES "Build the SDL3_rtf sample program(s)" ${SDL3RTF_ROOTPROJECT})
