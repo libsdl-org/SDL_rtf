@@ -6,9 +6,9 @@ SDL3_rtf_0.0.0 {
     RTF_GetHeight;
     RTF_GetSubject;
     RTF_GetTitle;
-    RTF_Linked_Version;
     RTF_Load;
     RTF_Load_IO;
     RTF_Render;
+    RTF_Version;
   local: *;
 };

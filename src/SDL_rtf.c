@@ -28,7 +28,7 @@
 
 
 /* rcg06192001 get linked library's version. */
-int RTF_Linked_Version(void)
+int RTF_Version(void)
 {
     return SDL_RTF_VERSION;
 }
