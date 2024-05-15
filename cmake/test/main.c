@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     if (TTF_Init() == -1) {
         SDL_Log("TTF_Init: %s", TTF_GetError());
     }
-    v = RTF_Version();
+    version = RTF_Version();
     SDL_Log("SDL_rtf linked version: %u.%u.%u",
                 SDL_VERSIONNUM_MAJOR(version),
                 SDL_VERSIONNUM_MINOR(version),
