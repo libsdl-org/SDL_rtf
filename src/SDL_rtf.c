@@ -28,11 +28,9 @@
 
 
 /* rcg06192001 get linked library's version. */
-const SDL_Version *RTF_Linked_Version(void)
+int RTF_Linked_Version(void)
 {
-    static SDL_Version linked_version;
-    SDL_RTF_VERSION(&linked_version);
-    return(&linked_version);
+    return SDL_RTF_VERSION;
 }
 
 

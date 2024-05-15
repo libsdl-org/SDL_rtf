@@ -11,7 +11,7 @@ export LC_CTYPE=C
 
 ref_major=$(sed -ne 's/^#define SDL_RTF_MAJOR_VERSION  *//p' include/SDL3_rtf/SDL_rtf.h)
 ref_minor=$(sed -ne 's/^#define SDL_RTF_MINOR_VERSION  *//p' include/SDL3_rtf/SDL_rtf.h)
-ref_micro=$(sed -ne 's/^#define SDL_RTF_PATCHLEVEL  *//p' include/SDL3_rtf/SDL_rtf.h)
+ref_micro=$(sed -ne 's/^#define SDL_RTF_MICRO_VERSION  *//p' include/SDL3_rtf/SDL_rtf.h)
 ref_version="${ref_major}.${ref_minor}.${ref_micro}"
 
 tests=0

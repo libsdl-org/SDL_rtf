@@ -32,42 +32,36 @@
 extern "C" {
 #endif
 
-/* Printable format: "%d.%d.%d", MAJOR, MINOR, PATCHLEVEL
-*/
+/**
+ * Printable format: "%d.%d.%d", MAJOR, MINOR, MICRO
+ */
 #define SDL_RTF_MAJOR_VERSION   3
 #define SDL_RTF_MINOR_VERSION   0
-#define SDL_RTF_PATCHLEVEL      0
-
-/* This macro can be used to fill a version structure with the compile-time
- * version of the SDL_rtf library.
- */
-#define SDL_RTF_VERSION(X)                          \
-{                                                   \
-        (X)->major = SDL_RTF_MAJOR_VERSION;         \
-        (X)->minor = SDL_RTF_MINOR_VERSION;         \
-        (X)->patch = SDL_RTF_PATCHLEVEL;            \
-}
-
-/* Backwards compatibility */
-#define RTF_MAJOR_VERSION       SDL_RTF_MAJOR_VERSION
-#define RTF_MINOR_VERSION       SDL_RTF_MINOR_VERSION
-#define RTF_PATCHLEVEL          SDL_RTF_PATCHLEVEL
-#define RTF_VERSION(X)          SDL_RTF_VERSION(X)
+#define SDL_RTF_MICRO_VERSION   0
 
 /**
- * Query the version of SDL_rtf that the program is linked against.
- *
+ * This is the version number macro for the current SDL_rtf version.
+ */
+#define SDL_RTF_VERSION \
+    SDL_VERSIONNUM(SDL_RTF_MAJOR_VERSION, SDL_RTF_MINOR_VERSION, SDL_RTF_MICRO_VERSION)
+
+/**
+ * This macro will evaluate to true if compiled with SDL_rtf at least X.Y.Z.
+ */
+#define SDL_RTF_VERSION_ATLEAST(X, Y, Z) \
+    ((SDL_RTF_MAJOR_VERSION >= X) && \
+     (SDL_RTF_MAJOR_VERSION > X || SDL_RTF_MINOR_VERSION >= Y) && \
+     (SDL_RTF_MAJOR_VERSION > X || SDL_RTF_MINOR_VERSION > Y || SDL_RTF_MICRO_VERSION >= Z))
+
+/**
  * This function gets the version of the dynamically linked SDL_rtf library.
- * This is separate from the SDL_RTF_VERSION() macro, which tells you what
- * version of the SDL_rtf headers you compiled against.
  *
- * This returns static internal data; do not free or modify it!
- *
- * \returns a pointer to the version information.
+ * \returns SDL_rtf version
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC const SDL_Version * SDLCALL RTF_Linked_Version(void);
+extern DECLSPEC int SDLCALL RTF_Version(void);
+
 
 typedef struct _RTF_Context RTF_Context;
 
