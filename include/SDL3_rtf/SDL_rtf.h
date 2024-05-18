@@ -60,7 +60,7 @@ extern "C" {
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC int SDLCALL RTF_Version(void);
+extern SDL_DECLSPEC int SDLCALL RTF_Version(void);
 
 
 typedef struct _RTF_Context RTF_Context;
@@ -135,7 +135,7 @@ typedef struct _RTF_FontEngine
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngine);
+extern SDL_DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngine);
 
 /**
  * Set the text of an RTF context, with data loaded from a filename.
@@ -151,7 +151,7 @@ extern DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *renderer, 
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
+extern SDL_DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
 
 /**
  * Set the text of an RTF context, with data loaded from an SDL_IOStream.
@@ -171,7 +171,7 @@ extern DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC int SDLCALL RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int closeio);
+extern SDL_DECLSPEC int SDLCALL RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int closeio);
 
 /**
  * Get the title of an RTF document.
@@ -185,7 +185,7 @@ extern DECLSPEC int SDLCALL RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC const char * SDLCALL RTF_GetTitle(RTF_Context *ctx);
+extern SDL_DECLSPEC const char * SDLCALL RTF_GetTitle(RTF_Context *ctx);
 
 /**
  * Get the subject of an RTF document.
@@ -199,7 +199,7 @@ extern DECLSPEC const char * SDLCALL RTF_GetTitle(RTF_Context *ctx);
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC const char * SDLCALL RTF_GetSubject(RTF_Context *ctx);
+extern SDL_DECLSPEC const char * SDLCALL RTF_GetSubject(RTF_Context *ctx);
 
 /**
  * Get the author of an RTF document.
@@ -213,7 +213,7 @@ extern DECLSPEC const char * SDLCALL RTF_GetSubject(RTF_Context *ctx);
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC const char * SDLCALL RTF_GetAuthor(RTF_Context *ctx);
+extern SDL_DECLSPEC const char * SDLCALL RTF_GetAuthor(RTF_Context *ctx);
 
 /**
  * Get the height of an RTF render area given a certain width.
@@ -227,7 +227,7 @@ extern DECLSPEC const char * SDLCALL RTF_GetAuthor(RTF_Context *ctx);
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
+extern SDL_DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
 
 /**
  * Render the RTF document to a rectangle in an SDL_Renderer.
@@ -244,7 +244,7 @@ extern DECLSPEC int SDLCALL RTF_GetHeight(RTF_Context *ctx, int width);
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset);
+extern SDL_DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset);
 
 /**
  * Free an RTF display context.
@@ -259,7 +259,7 @@ extern DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yO
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
+extern SDL_DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
 
 /* We'll use SDL for reporting errors */
 #define RTF_SetError    SDL_SetError
