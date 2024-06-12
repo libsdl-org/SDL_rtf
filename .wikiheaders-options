@@ -14,3 +14,5 @@ wikiurl = https://wiki.libsdl.org/SDL_rtf
 bugreporturl = https://github.com/libsdl-org/sdlwiki/issues/new
 warn_about_missing = 0
 wikipreamble = (This function is part of SDL_rtf, a separate library from SDL.)
+wikiheaderfiletext = Defined in [<SDL3_rtf/%fname%>](https://github.com/libsdl-org/SDL_rtf/blob/main/include/SDL3_rtf/%fname%)
+manpageheaderfiletext = Defined in SDL3_rtf/%fname%
