@@ -375,9 +375,7 @@ static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, i
 
         dstRect.x = (float)(rect->x + surface->x);
         dstRect.y = (float)(rect->y + yOffset + surface->y);
-        SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-        dstRect.w = (float)w;
-        dstRect.h = (float)h;
+        SDL_GetTextureSize(texture, &dstRect.w, &dstRect.h);
         SDL_RenderTexture(renderer, texture, NULL, &dstRect);
     }
 }
