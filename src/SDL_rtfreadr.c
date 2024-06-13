@@ -367,7 +367,6 @@ static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, i
     SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
     SDL_FRect dstRect;
     RTF_Surface *surface;
-    int w, h;
 
     for (surface = line->startSurface; surface; surface = surface->next)
     {
@@ -379,5 +378,3 @@ static void RenderLine(RTF_Context *ctx, RTF_Line *line, const SDL_Rect *rect, i
         SDL_RenderTexture(renderer, texture, NULL, &dstRect);
     }
 }
-
-/* vi: set ts=4 sw=4 expandtab: */
