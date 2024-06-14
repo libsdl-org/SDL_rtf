@@ -56,7 +56,7 @@ extern "C" {
 /**
  * This function gets the version of the dynamically linked SDL_rtf library.
  *
- * \returns SDL_rtf version
+ * \returns SDL_rtf version.
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
