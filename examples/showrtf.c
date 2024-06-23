@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
                 offset = (int)(ratio * height);
             }
             if (event.type == SDL_EVENT_KEY_DOWN) {
-                switch(event.key.keysym.sym) {
+                switch(event.key.key) {
                     case SDLK_ESCAPE:
                         done = 1;
                         break;
