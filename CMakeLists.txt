@@ -27,9 +27,9 @@ sdl_calculate_derived_version_variables(${MAJOR_VERSION} ${MINOR_VERSION} ${MICR
 message(STATUS "Configuring ${PROJECT_NAME} ${PROJECT_VERSION}")
 
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-    set(SDL3RTF_ROOTPROJECT ON)
+    set(SDLRTF_ROOTPROJECT ON)
 else()
-    set(SDL3RTF_ROOTPROJECT OFF)
+    set(SDLRTF_ROOTPROJECT OFF)
 endif()
 
 # Assume MSVC projects don't have a package manager and need vendored dependencies (by default).
@@ -60,19 +60,19 @@ endif()
 option(CMAKE_POSITION_INDEPENDENT_CODE "Build static libraries with -fPIC" ${PLATFORM_SUPPORTS_SHARED})
 cmake_dependent_option(BUILD_SHARED_LIBS "Build the library as a shared library" ON PLATFORM_SUPPORTS_SHARED OFF)
 
-cmake_dependent_option(SDL3RTF_INSTALL "Enable SDL3_rtf install target" ${SDL3RTF_ROOTPROJECT} "${sdl3rtf_install_enableable}" OFF)
-cmake_dependent_option(SDL3RTF_INSTALL_MAN "Install man pages for SDL3_rtf" OFF "SDL3RTF_INSTALL" OFF)
-option(SDL3RTF_WERROR "Treat warnings as errors" OFF)
+cmake_dependent_option(SDLRTF_INSTALL "Enable SDL3_rtf install target" ${SDLRTF_ROOTPROJECT} "${sdl3rtf_install_enableable}" OFF)
+cmake_dependent_option(SDLRTF_INSTALL_MAN "Install man pages for SDL3_rtf" OFF "SDLRTF_INSTALL" OFF)
+option(SDLRTF_WERROR "Treat warnings as errors" OFF)
 
-option(SDL3RTF_SAMPLES "Build the SDL3_rtf sample program(s)" ${SDL3RTF_ROOTPROJECT})
-cmake_dependent_option(SDL3RTF_SAMPLES_INSTALL "Install the SDL3_rtf sample program(s)" OFF "SDL3RTF_SAMPLES;SDL3RTF_INSTALL" OFF)
+option(SDLRTF_SAMPLES "Build the SDL3_rtf sample program(s)" ${SDLRTF_ROOTPROJECT})
+cmake_dependent_option(SDLRTF_SAMPLES_INSTALL "Install the SDL3_rtf sample program(s)" OFF "SDLRTF_SAMPLES;SDLRTF_INSTALL" OFF)
 
 # Save BUILD_SHARED_LIBS variable
-set(SDL3RTF_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
+set(SDLRTF_BUILD_SHARED_LIBS "${BUILD_SHARED_LIBS}")
 
 set(sdl_required_components Headers)
 
-if(SDL3RTF_BUILD_SHARED_LIBS)
+if(SDLRTF_BUILD_SHARED_LIBS)
     set(sdl3_rtf_target_name SDL3_rtf-shared)
     set(sdl3_target_name SDL3::SDL3-shared)
 
@@ -115,11 +115,11 @@ target_compile_definitions(${sdl3_rtf_target_name} PRIVATE
     SDL_BUILD_MICRO_VERSION=${MICRO_VERSION}
 )
 target_link_libraries(${sdl3_rtf_target_name} PUBLIC SDL3::Headers)
-if(SDL3RTF_BUILD_SHARED_LIBS)
+if(SDLRTF_BUILD_SHARED_LIBS)
     target_link_libraries(${sdl3_rtf_target_name} PRIVATE SDL3::SDL3-shared)
 endif()
-sdl_add_warning_options(${sdl3_rtf_target_name} WARNING_AS_ERROR ${SDL3RTF_WERROR})
-if(WIN32 AND SDL3RTF_BUILD_SHARED_LIBS)
+sdl_add_warning_options(${sdl3_rtf_target_name} WARNING_AS_ERROR ${SDLRTF_WERROR})
+if(WIN32 AND SDLRTF_BUILD_SHARED_LIBS)
     target_sources(${sdl3_rtf_target_name} PRIVATE
         src/version.rc
     )
@@ -143,7 +143,7 @@ if(NOT ANDROID)
         )
     endif()
 endif()
-if(SDL3RTF_BUILD_SHARED_LIBS)
+if(SDLRTF_BUILD_SHARED_LIBS)
     if(WIN32)
         set_target_properties(${sdl3_rtf_target_name} PROPERTIES
             PREFIX ""
@@ -157,19 +157,19 @@ else()
     endif()
 endif()
 
-if(SDL3RTF_BUILD_SHARED_LIBS)
+if(SDLRTF_BUILD_SHARED_LIBS)
     # Use `Compatible Interface Properties` to ensure a shared SDL3_rtf is linked to a shared SDL3 library
-    set_property(TARGET ${sdl3_rtf_target_name} PROPERTY INTERFACE_SDL3_SHARED ${SDL3RTF_BUILD_SHARED_LIBS})
+    set_property(TARGET ${sdl3_rtf_target_name} PROPERTY INTERFACE_SDL3_SHARED ${SDLRTF_BUILD_SHARED_LIBS})
     set_property(TARGET ${sdl3_rtf_target_name} APPEND PROPERTY COMPATIBLE_INTERFACE_BOOL SDL3_SHARED)
 endif()
 
-if(SDL3RTF_BUILD_SHARED_LIBS)
+if(SDLRTF_BUILD_SHARED_LIBS)
     sdl_target_link_options_no_undefined(${sdl3_rtf_target_name})
 endif()
 
 sdl_target_link_option_version_file(${sdl3_rtf_target_name} "${CMAKE_CURRENT_SOURCE_DIR}/src/SDL_rtf.sym")
 
-if(SDL3RTF_INSTALL)
+if(SDLRTF_INSTALL)
     install(
         TARGETS ${sdl3_rtf_target_name}
         EXPORT SDL3_rtfTargets
@@ -225,27 +225,27 @@ if(SDL3RTF_INSTALL)
         COMPONENT library
     )
 
-    if(SDL3RTF_INSTALL_MAN)
-        sdl_get_git_revision_hash(SDL3RTF_REVISION)
+    if(SDLRTF_INSTALL_MAN)
+        sdl_get_git_revision_hash(SDLRTF_REVISION)
         SDL_generate_manpages(
             HEADERS_DIR "${PROJECT_DIR}/include/SDL3_rtf"
             SYMBOL "RTF_CreateContext"
             WIKIHEADERS_PL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/build-scripts/wikiheaders.pl"
-            REVISION "${SDL3RTF_REVISION}"
+            REVISION "${SDLRTF_REVISION}"
         )
     endif()
 endif()
 
-if(SDL3RTF_SAMPLES)
+if(SDLRTF_SAMPLES)
     add_executable(showrtf examples/showrtf.c)
 
     foreach(prog showrtf)
-        sdl_add_warning_options(${prog} WARNING_AS_ERROR ${SDL3RTF_WERROR})
+        sdl_add_warning_options(${prog} WARNING_AS_ERROR ${SDLRTF_WERROR})
         target_link_libraries(${prog} PRIVATE SDL3_rtf::${sdl3_rtf_target_name})
         target_link_libraries(${prog} PRIVATE ${sdl3ttf_target_name})
         target_link_libraries(${prog} PRIVATE ${sdl3_target_name})
 
-        if(SDL3RTF_SAMPLES_INSTALL)
+        if(SDLRTF_SAMPLES_INSTALL)
             install(TARGETS ${prog}
                 RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
             )
