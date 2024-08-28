@@ -566,8 +566,8 @@ int ecPopRtfState(RTF_Context *ctx)
 int ecParseRtfKeyword(RTF_Context *ctx)
 {
     int ch;
-    char fParam = fFalse;
-    char fNeg = fFalse;
+    bool fParam = fFalse;
+    bool fNeg = fFalse;
     int param = 0;
     char *pch;
     char szKeyword[30];

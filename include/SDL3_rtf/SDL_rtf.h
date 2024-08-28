@@ -147,18 +147,19 @@ extern SDL_DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *render
  *
  * \param ctx the RTF context to update.
  * \param file the file path to load RTF data from.
- * \returns 0 on success, -1 on failure.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern SDL_DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
+extern SDL_DECLSPEC SDL_bool SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
 
 /**
  * Set the text of an RTF context, with data loaded from an SDL_IOStream.
  *
  * This can be called multiple times to change the text displayed.
  *
- * If `closeio` is non-zero, this function will close `src`, whether this
+ * If `closeio` is SDL_TRUE, this function will close `src`, whether this
  * function succeeded or not.
  *
  * On failure, call RTF_GetError() to get a human-readable text message
@@ -166,12 +167,14 @@ extern SDL_DECLSPEC int SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
  *
  * \param ctx the RTF context to update.
  * \param src the SDL_IOStream to load RTF data from.
- * \param closeio non-zero to close/free `src`, zero to leave open.
- * \returns 0 on success, -1 on failure.
+ * \param closeio SDL_TRUE to close `src` when the font is closed, SDL_FALSE
+ *                to leave it open.
+ * \returns SDL_TRUE on success or SDL_FALSE on failure; call SDL_GetError()
+ *          for more information.
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
-extern SDL_DECLSPEC int SDLCALL RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int closeio);
+extern SDL_DECLSPEC SDL_bool SDLCALL RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, SDL_bool closeio);
 
 /**
  * Get the title of an RTF document.
@@ -260,10 +263,6 @@ extern SDL_DECLSPEC void SDLCALL RTF_Render(RTF_Context *ctx, SDL_Rect *rect, in
  * \since This function is available since SDL_rtf 3.0.0.
  */
 extern SDL_DECLSPEC void SDLCALL RTF_FreeContext(RTF_Context *ctx);
-
-/* We'll use SDL for reporting errors */
-#define RTF_SetError    SDL_SetError
-#define RTF_GetError    SDL_GetError
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

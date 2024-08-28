@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
         SDL_Log("SDL_Init: could not initialize SDL: %s", SDL_GetError());
         return 1;
     }
-    if (TTF_Init() == -1) {
-        SDL_Log("TTF_Init: %s", TTF_GetError());
+    if (!TTF_Init()) {
+        SDL_Log("TTF_Init: %s", SDL_GetError());
     }
     version = RTF_Version();
     SDL_Log("SDL_rtf linked version: %u.%u.%u",

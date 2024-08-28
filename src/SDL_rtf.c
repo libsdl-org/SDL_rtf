@@ -26,13 +26,11 @@
 #include "rtfdecl.h"
 #include "SDL_rtfreadr.h"
 
-
 /* rcg06192001 get linked library's version. */
 int RTF_Version(void)
 {
     return SDL_RTF_VERSION;
 }
-
 
 /* Create an RTF display context, with the given font engine.
  * Once a context is created, it can be used to load and display
@@ -42,35 +40,35 @@ RTF_Context *RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngin
 {
     RTF_Context *ctx;
 
-    if ( fontEngine->version != RTF_FONT_ENGINE_VERSION ) {
-            RTF_SetError("Unknown font engine version");
-            return(NULL);
+    if (fontEngine->version != RTF_FONT_ENGINE_VERSION) {
+            SDL_SetError("Unknown font engine version");
+            return NULL;
     }
 
     ctx = (RTF_Context *)SDL_malloc(sizeof(*ctx));
-    if ( ctx == NULL ) {
-            RTF_SetError("Out of memory");
-            return(NULL);
+    if (!ctx) {
+            SDL_SetError("Out of memory");
+            return NULL;
     }
     SDL_memset(ctx, 0, sizeof(*ctx));
     ctx->renderer = renderer;
-    ctx->fontEngine = SDL_malloc(sizeof *fontEngine);
-    if ( ctx->fontEngine == NULL ) {
-        RTF_SetError("Out of memory");
+    ctx->fontEngine = (RTF_FontEngine *)SDL_malloc(sizeof *fontEngine);
+    if (!ctx->fontEngine) {
+        SDL_SetError("Out of memory");
         SDL_free(ctx);
-        return(NULL);
+        return NULL;
     }
     SDL_memcpy(ctx->fontEngine, fontEngine, sizeof(*fontEngine));
-    return(ctx);
+    return ctx;
 }
 
 /* Set the text of an RTF context.
- * This function returns 0 if it succeeds or -1 if it fails.
- * Use RTF_GetError() to get a text message corresponding to the error.
+ * This function returns SDL_TRUE if it succeeds or SDL_FALSE if it fails.
+ * Use SDL_GetError() to get a text message corresponding to the error.
  */
-int RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int closeio)
+SDL_bool RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, SDL_bool closeio)
 {
-    int retval;
+    SDL_bool retval;
 
     ecClearContext(ctx);
 
@@ -83,63 +81,54 @@ int RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, int closeio)
     ctx->nextch = -1;
 
     /* Parse the RTF text and clean up */
-    switch(ecRtfParse(ctx)) {
+    switch (ecRtfParse(ctx)) {
         case ecOK:
-            retval = 0;
+            retval = SDL_TRUE;
             break;
         case ecStackUnderflow:
-            RTF_SetError("Unmatched '}'");
-            retval = -1;
+            retval = SDL_SetError("Unmatched '}'");
             break;
         case ecStackOverflow:
-            RTF_SetError("Too many '{' -- memory exhausted");
-            retval = -1;
+            retval = SDL_SetError("Too many '{' -- memory exhausted");
             break;
         case ecUnmatchedBrace:
-            RTF_SetError("RTF ended during an open group");
-            retval = -1;
+            retval = SDL_SetError("RTF ended during an open group");
             break;
         case ecInvalidHex:
-            RTF_SetError("Invalid hex character found in data");
-            retval = -1;
+            retval = SDL_SetError("Invalid hex character found in data");
             break;
         case ecBadTable:
-            RTF_SetError("RTF table (sym or prop) invalid");
-            retval = -1;
+            retval = SDL_SetError("RTF table (sym or prop) invalid");
             break;
         case ecAssertion:
-            RTF_SetError("Assertion failure");
-            retval = -1;
+            retval = SDL_SetError("Assertion failure");
             break;
         case ecEndOfFile:
-            RTF_SetError("End of file reached while reading RTF");
-            retval = -1;
+            retval = SDL_SetError("End of file reached while reading RTF");
             break;
         case ecFontNotFound:
-            RTF_SetError("Couldn't find font for text");
-            retval = -1;
+            retval = SDL_SetError("Couldn't find font for text");
             break;
         default:
-            RTF_SetError("Unknown error");
-            retval = -1;
+            retval = SDL_SetError("Unknown error");
             break;
     }
-    while ( ctx->psave ) {
+    while (ctx->psave) {
         ecPopRtfState(ctx);
     }
     ctx->stream = NULL;
 
-    if ( closeio ) {
+    if (closeio) {
         SDL_CloseIO(src);
     }
-    return(retval);
+    return retval;
 }
-int RTF_Load(RTF_Context *ctx, const char *file)
+
+SDL_bool RTF_Load(RTF_Context *ctx, const char *file)
 {
     SDL_IOStream *src = SDL_IOFromFile(file, "rb");
-    if ( src == NULL ) {
-        /*RTF_SetError(SDL_GetError());*/
-        return -1;
+    if (!src) {
+        return SDL_FALSE;
     }
     return RTF_Load_IO(ctx, src, 1);
 }
@@ -180,7 +169,7 @@ void RTF_Render(RTF_Context *ctx, SDL_Rect *rect, int yOffset)
 {
     SDL_Renderer *renderer = (SDL_Renderer *)ctx->renderer;
     SDL_Rect fullRect;
-    if ( !rect ) {
+    if (!rect) {
         SDL_GetRenderViewport(renderer, &fullRect);
         fullRect.x = 0;
         fullRect.y = 0;
@@ -197,5 +186,3 @@ void RTF_FreeContext(RTF_Context *ctx)
     SDL_free(ctx->fontEngine);
     SDL_free(ctx);
 }
-
-/* vi: set ts=4 sw=4 expandtab: */
