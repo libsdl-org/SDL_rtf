@@ -63,12 +63,12 @@ RTF_Context *RTF_CreateContext(SDL_Renderer *renderer, RTF_FontEngine *fontEngin
 }
 
 /* Set the text of an RTF context.
- * This function returns SDL_TRUE if it succeeds or SDL_FALSE if it fails.
+ * This function returns true if it succeeds or false if it fails.
  * Use SDL_GetError() to get a text message corresponding to the error.
  */
-SDL_bool RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, SDL_bool closeio)
+bool RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, bool closeio)
 {
-    SDL_bool retval;
+    bool retval;
 
     ecClearContext(ctx);
 
@@ -83,7 +83,7 @@ SDL_bool RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, SDL_bool closeio)
     /* Parse the RTF text and clean up */
     switch (ecRtfParse(ctx)) {
         case ecOK:
-            retval = SDL_TRUE;
+            retval = true;
             break;
         case ecStackUnderflow:
             retval = SDL_SetError("Unmatched '}'");
@@ -124,11 +124,11 @@ SDL_bool RTF_Load_IO(RTF_Context *ctx, SDL_IOStream *src, SDL_bool closeio)
     return retval;
 }
 
-SDL_bool RTF_Load(RTF_Context *ctx, const char *file)
+bool RTF_Load(RTF_Context *ctx, const char *file)
 {
     SDL_IOStream *src = SDL_IOFromFile(file, "rb");
     if (!src) {
-        return SDL_FALSE;
+        return false;
     }
     return RTF_Load_IO(ctx, src, 1);
 }
