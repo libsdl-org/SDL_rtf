@@ -147,8 +147,8 @@ extern SDL_DECLSPEC RTF_Context * SDLCALL RTF_CreateContext(SDL_Renderer *render
  *
  * \param ctx the RTF context to update.
  * \param file the file path to load RTF data from.
- * \returns true on success or false on failure; call SDL_GetError()
- *          for more information.
+ * \returns true on success or false on failure; call SDL_GetError() for more
+ *          information.
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
@@ -159,18 +159,18 @@ extern SDL_DECLSPEC bool SDLCALL RTF_Load(RTF_Context *ctx, const char *file);
  *
  * This can be called multiple times to change the text displayed.
  *
- * If `closeio` is true, this function will close `src`, whether this
- * function succeeded or not.
+ * If `closeio` is true, this function will close `src`, whether this function
+ * succeeded or not.
  *
  * On failure, call RTF_GetError() to get a human-readable text message
  * corresponding to the error.
  *
  * \param ctx the RTF context to update.
  * \param src the SDL_IOStream to load RTF data from.
- * \param closeio true to close `src` when the font is closed, false
- *                to leave it open.
- * \returns true on success or false on failure; call SDL_GetError()
- *          for more information.
+ * \param closeio true to close `src` when the font is closed, false to leave
+ *                it open.
+ * \returns true on success or false on failure; call SDL_GetError() for more
+ *          information.
  *
  * \since This function is available since SDL_rtf 3.0.0.
  */
