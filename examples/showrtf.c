@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer;
     RTF_Context *ctx;
     RTF_FontEngine fontEngine;
-    const Uint8 *keystate;
+    const bool *keystate;
 
     /* Parse command line arguments */
     for (i = 1; i < argc; ++i) {
