@@ -147,7 +147,7 @@ static SDL_Texture * SDLCALL RenderText(void *_font, SDL_Renderer *renderer, con
 {
     TTF_Font *font = (TTF_Font *)_font;
     SDL_Texture *texture = NULL;
-    SDL_Surface *surface = TTF_RenderUTF8_Blended(font, text, fg);
+    SDL_Surface *surface = TTF_RenderText_Blended(font, text, 0, fg);
     if (surface) {
         texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_DestroySurface(surface);
