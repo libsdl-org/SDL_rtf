@@ -74,7 +74,7 @@ static Uint32 UTF8_to_UNICODE(const char *utf8, int *advance)
         ch  =  (Uint16)(utf8[i]&0x3F) << 6;
         ch |=  (Uint16)(utf8[++i]&0x3F);
     }
-    *advance = (i+1);
+    *advance = (i + 1);
     return ch;
 }
 
@@ -91,7 +91,7 @@ static void * SDLCALL CreateFont(const char *name, RTF_FontFamily family, int ch
         index = 0;
     }
 
-    font = TTF_OpenFont(FontList[index], size);
+    font = TTF_OpenFont(FontList[index], (float)size);
     if (font) {
         int TTF_style = TTF_STYLE_NORMAL;
         if (style & RTF_FontBold) {
@@ -114,7 +114,7 @@ static void * SDLCALL CreateFont(const char *name, RTF_FontFamily family, int ch
 static int SDLCALL GetLineSpacing(void *_font)
 {
     TTF_Font *font = (TTF_Font *)_font;
-    return TTF_FontLineSkip(font);
+    return TTF_GetFontLineSkip(font);
 }
 
 static int SDLCALL GetCharacterOffsets(void *_font, const char *text, int *byteOffsets, int *pixelOffsets, int maxOffsets)
@@ -133,7 +133,7 @@ static int SDLCALL GetCharacterOffsets(void *_font, const char *text, int *byteO
         ch = UTF8_to_UNICODE(text, &advance);
         text += advance;
         bytes += advance;
-        TTF_GlyphMetrics(font, ch, NULL, NULL, NULL, NULL, &advance);
+        TTF_GetGlyphMetrics(font, ch, NULL, NULL, NULL, NULL, &advance);
         pixels += advance;
     }
     if (i < maxOffsets) {
