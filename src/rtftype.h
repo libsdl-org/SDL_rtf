@@ -6,11 +6,6 @@
 #ifndef _RTFTYPE_H
 #define _RTFTYPE_H
 
-#include <stdbool.h>
-
-#define fTrue true
-#define fFalse false
-
 typedef struct char_prop
 {
     int fFontCharset;
