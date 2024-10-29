@@ -10,10 +10,6 @@ set(SDL_REQUIRED_VERSION 3.0.0)
 
 set(SDLTTF_REQUIRED_VERSION 3.0.0)
 
-if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
-    message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the SDL_rtf source code and call cmake from there")
-endif()
-
 project(SDL3_rtf
     LANGUAGES C
     VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${MICRO_VERSION}"

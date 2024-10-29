@@ -1,0 +1,6 @@
+ninja.build
+/Makefile
+CMakeFiles
+*Config.cmake
+*ConfigVersion.cmake
+*.pc
