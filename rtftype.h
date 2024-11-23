@@ -6,12 +6,15 @@
 #ifndef _RTFTYPE_H
 #define _RTFTYPE_H
 
-#if !defined(__cplusplus) && !defined(bool)
-typedef char bool;
+#if !defined(__cplusplus)
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
+#include <stdbool.h>
+#else
+typedef unsigned char bool;
+#define true  1
+#define false 0
 #endif
-
-#define fTrue 1
-#define fFalse 0
+#endif
 
 typedef struct char_prop
 {
