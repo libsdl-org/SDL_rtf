@@ -568,8 +568,8 @@ int ecPopRtfState(RTF_Context *ctx)
 int ecParseRtfKeyword(RTF_Context *ctx)
 {
     int ch;
-    char fParam = fFalse;
-    char fNeg = fFalse;
+    char fParam = false;
+    char fNeg = false;
     int param = 0;
     char *pch;
     char szKeyword[30];
@@ -594,13 +594,13 @@ int ecParseRtfKeyword(RTF_Context *ctx)
     *pch = '\0';
     if (ch == '-')
     {
-        fNeg = fTrue;
+        fNeg = true;
         if (ecRtfGetChar(ctx, &ch) != ecOK)
             return ecEndOfFile;
     }
     if (isdigit(ch))
     {
-        fParam = fTrue;         /* a digit after the control means we have a parameter */
+        fParam = true;          /* a digit after the control means we have a parameter */
         for (pch = szParameter; isdigit(ch);)
         {
             *pch++ = (char) ch;
