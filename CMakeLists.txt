@@ -58,6 +58,7 @@ cmake_dependent_option(BUILD_SHARED_LIBS "Build the library as a shared library"
 
 cmake_dependent_option(SDLRTF_INSTALL "Enable SDL3_rtf install target" ${SDLRTF_ROOTPROJECT} "${sdl3rtf_install_enableable}" OFF)
 cmake_dependent_option(SDLRTF_INSTALL_MAN "Install man pages for SDL3_rtf" OFF "SDLRTF_INSTALL" OFF)
+cmake_dependent_option(SDLRTF_RELOCATABLE "Create relocatable SDL_rtf package" "${MSVC}" SDLRTF_INSTALL OFF)
 option(SDLRTF_WERROR "Treat warnings as errors" OFF)
 
 option(SDLRTF_SAMPLES "Build the SDL3_rtf sample program(s)" ${SDLRTF_ROOTPROJECT})
@@ -206,9 +207,13 @@ if(SDLRTF_INSTALL)
         COMPONENT devel
     )
 
-    file(RELATIVE_PATH SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${CMAKE_INSTALL_PREFIX}/${SDLRTF_PKGCONFIG_INSTALLDIR}" "${CMAKE_INSTALL_PREFIX}")
-    string(REGEX REPLACE "[/]+$" "" SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
-    set(SDL_PKGCONFIG_PREFIX "\${pcfiledir}/${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
+    if(SDLRTF_RELOCATABLE)
+        file(RELATIVE_PATH SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${CMAKE_INSTALL_PREFIX}/${SDLRTF_PKGCONFIG_INSTALLDIR}" "${CMAKE_INSTALL_PREFIX}")
+        string(REGEX REPLACE "[/]+$" "" SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG "${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
+        set(SDL_PKGCONFIG_PREFIX "\${pcfiledir}/${SDL_PATH_PREFIX_RELATIVE_TO_PKGCONFIG}")
+    else()
+        set(SDL_PKGCONFIG_PREFIX "${CMAKE_INSTALL_PREFIX}")
+    endif()
 
     configure_file(cmake/sdl3-rtf.pc.in sdl3-rtf.pc @ONLY)
 
