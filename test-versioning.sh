@@ -114,13 +114,15 @@ for rcfile in version.rc; do
     fi
 done
 
-#sdl_req=$(sed -ne 's/\$sdl2_version = "\([0-9.]*\)"$/\1/p' .github/fetch_sdl_vc.ps1)
-#
-#if [ "$ref_sdl_req" = "$sdl_req" ]; then
-#    ok ".github/fetch_sdl_vc.ps1 $sdl_req"
-#else
-#    not_ok ".github/fetch_sdl_vc.ps1 sdl2_version=$sdl_req disagrees with configure.ac SDL_VERSION=$ref_sdl_req"
-#fi
+if [ -f .github/fetch_sdl_vc.ps1 ]; then
+    sdl_req=$(sed -ne 's/\$sdl2_version = "\([0-9.]*\)"$/\1/p' .github/fetch_sdl_vc.ps1)
+
+    if [ "$ref_sdl_req" = "$sdl_req" ]; then
+        ok ".github/fetch_sdl_vc.ps1 $sdl_req"
+    else
+        not_ok ".github/fetch_sdl_vc.ps1 sdl2_version=$sdl_req disagrees with configure.ac SDL_VERSION=$ref_sdl_req"
+    fi
+fi
 
 echo "1..$tests"
 exit "$failed"
