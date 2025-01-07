@@ -7,7 +7,7 @@ http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnrtfspec/html/
 
 The showrtf example application relies on the SDL_ttf library for loading
 fonts and displaying text.
-The SDL_ttf library can be found at: http://www.libsdl.org/projects/SDL_rtf/
+The SDL_ttf library can be found at:   https://github.com/libsdl-org/SDL_ttf
 
 To make the library, type './configure' then 'make' to build the SDL rtf
 library and the showrtf example application.
