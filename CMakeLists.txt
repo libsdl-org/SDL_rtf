@@ -215,6 +215,17 @@ if(SDLRTF_INSTALL)
         set(SDL_PKGCONFIG_PREFIX "${CMAKE_INSTALL_PREFIX}")
     endif()
 
+    if(IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
+        set(INCLUDEDIR_FOR_PKG_CONFIG "${CMAKE_INSTALL_INCLUDEDIR}")
+    else()
+        set(INCLUDEDIR_FOR_PKG_CONFIG "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+    endif()
+    if(IS_ABSOLUTE "${CMAKE_INSTALL_LIBDIR}")
+        set(LIBDIR_FOR_PKG_CONFIG "${CMAKE_INSTALL_LIBDIR}")
+    else()
+        set(LIBDIR_FOR_PKG_CONFIG "\${prefix}/${CMAKE_INSTALL_LIBDIR}")
+    endif()
+
     configure_file(cmake/sdl3-rtf.pc.in sdl3-rtf.pc @ONLY)
 
     # Always install sdl3-rtf.pc file: libraries might be different between config modes
