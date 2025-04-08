@@ -9,9 +9,6 @@ The showrtf example application relies on the SDL_ttf library for loading
 fonts and displaying text.
 The SDL_ttf library can be found at: https://github.com/libsdl-org/SDL_ttf
 
-To make the library, type './configure' then 'make' to build the SDL rtf
-library and the showrtf example application.
-
 This library is under the zlib license, see the file "LICENSE.txt" for details.
 
 Enjoy!
