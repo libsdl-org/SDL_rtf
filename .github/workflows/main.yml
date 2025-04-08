@@ -44,15 +44,6 @@ jobs:
           ${{ matrix.platform.msys-env }}-perl
           ${{ matrix.platform.msys-env }}-pkg-config
           ${{ matrix.platform.msys-env }}-zlib
-    - name: Set up SDL
-      id: sdl
-      uses: libsdl-org/setup-sdl@main
-      with:
-        cmake-generator: Ninja
-        version: 3-head
-        version-sdl-ttf: 3-head
-        sdl-test: true
-        shell: ${{ matrix.platform.shell }}
     - name: Setup Macos dependencies
       if: ${{ runner.os == 'macOS' }}
       run: |
@@ -72,6 +63,15 @@ jobs:
           libharfbuzz-dev \
           pkg-config \
           ${NULL+}
+    - name: Set up SDL
+      id: sdl
+      uses: libsdl-org/setup-sdl@main
+      with:
+        cmake-generator: Ninja
+        version: 3-head
+        version-sdl-ttf: 3-head
+        sdl-test: true
+        shell: ${{ matrix.platform.shell }}
     - uses: actions/checkout@v4
       with:
         submodules: recursive
